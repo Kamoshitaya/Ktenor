@@ -26,7 +26,7 @@ export function OrderButton({
           new CustomEvent<string>(SELECT_SERVICE_EVENT, { detail: service }),
         );
       }}
-      className={`inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-line-strong px-5 py-3 text-sm font-medium transition-[background-color,border-color,transform] duration-[var(--dur-base)] ease-[var(--ease-standard)] hover:border-accent hover:bg-[var(--glass-bg-hover)] active:scale-[0.98] ${className ?? ""}`}
+      className={`order-btn inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-gold-contrast transition-[filter,transform] duration-[var(--dur-base)] ease-[var(--ease-standard)] hover:brightness-[1.08] active:scale-[0.98] ${className ?? ""}`}
     >
       {label}
       <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden>

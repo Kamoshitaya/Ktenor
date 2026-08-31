@@ -40,6 +40,7 @@
      emphasis only — the blue stays calm, this is what does the pointing. */
   --c-gold: #c9974f; /*  6.1:1 on --c-bg */
   --c-gold-deep: #9c7238;
+  --c-gold-contrast: #1c1408; /* text on a filled gold surface */
 
   /* --- Lines & silver -------------------------------------------------- */
   --c-silver: #c9ceda;
@@ -140,6 +141,7 @@
 
   --c-gold: #9c7238; /*  5.2:1 — darkened to hold contrast on the light field */
   --c-gold-deep: #7a5a2c;
+  --c-gold-contrast: #fdf8f0;
 
   --c-silver: #6b7280;
   --c-danger: #9b2c2c;
@@ -204,6 +206,7 @@
 
   --color-gold: var(--c-gold);
   --color-gold-deep: var(--c-gold-deep);
+  --color-gold-contrast: var(--c-gold-contrast);
 
   --color-silver: var(--c-silver);
   --color-danger: var(--c-danger);
@@ -573,6 +576,17 @@
   .gold-edge:hover::after,
   .gold-edge:focus-within::after {
     opacity: 0.7;
+  }
+
+  /**
+   * The pricing cards' own CTA — filled gold rather than the site's usual
+   * bordered ghost-button, since this is the one button gold is allowed to
+   * touch (see --c-gold's own comment: reserved for price + primary
+   * emphasis). Every other button on the site is untouched.
+   */
+  .order-btn {
+    background: linear-gradient(135deg, var(--c-gold), var(--c-gold-deep));
+    box-shadow: 0 10px 24px -10px rgb(201 151 79 / 0.55);
   }
 
   /**
