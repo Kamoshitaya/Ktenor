@@ -34,7 +34,7 @@ export function PricingCard({
   const hasIncluded = (service.included?.length ?? 0) > 0;
 
   return (
-    <article className="pricing-card surface surface-hover edge-accent relative flex flex-col overflow-hidden rounded-[var(--radius-lg)]">
+    <article className="pricing-card gold-edge surface surface-hover edge-accent relative flex flex-col overflow-hidden rounded-[var(--radius-lg)]">
       <div className="p-7 sm:p-9">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
           <h3 className="text-[length:var(--text-h3)]">{service.name}</h3>
@@ -46,7 +46,7 @@ export function PricingCard({
                 <span className="text-caption font-body font-normal text-text-muted">
                   {fromLabel}{" "}
                 </span>
-                €{service.priceFrom}
+                <span className="text-gold">€{service.priceFrom}</span>
               </>
             )}
           </p>

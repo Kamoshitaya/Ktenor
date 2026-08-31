@@ -26,7 +26,7 @@ export function Section({
   return (
     <section
       id={id}
-      className={`relative isolate scroll-mt-[72px] py-[var(--spacing-section)] ${className ?? ""}`}
+      className={`section-seam relative isolate scroll-mt-[72px] py-[var(--spacing-section)] ${className ?? ""}`}
     >
       <div aria-hidden className="section-wash" data-tone={tone} />
       <div className="container-page">
