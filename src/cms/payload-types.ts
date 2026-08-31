@@ -190,6 +190,15 @@ export interface Service {
    */
   note?: string | null;
   /**
+   * Main packages only — the expandable "What's included" list on hover/tap. Leave empty for add-ons.
+   */
+  included?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * On for add-ons (multilingual, support, etc.), off for the main packages.
    */
   isAddon?: boolean | null;
@@ -402,6 +411,12 @@ export interface ServicesSelect<T extends boolean = true> {
   priceFrom?: T;
   timeline?: T;
   note?: T;
+  included?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
   isAddon?: T;
   order?: T;
   updatedAt?: T;

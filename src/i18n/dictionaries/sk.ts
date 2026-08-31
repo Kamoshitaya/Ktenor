@@ -81,6 +81,7 @@ const sk: Dictionary = {
     from: "od",
     onRequest: "Na vyžiadanie",
     timeline: "Termín",
+    whatsIncluded: "Čo je súčasťou",
     includedTitle: "Súčasťou každého projektu",
     included: [
       "Dizajn od nuly — žiadne šablóny",

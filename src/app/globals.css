@@ -565,6 +565,42 @@
     margin-inline: auto;
     padding-inline: var(--spacing-gutter);
   }
+
+  /**
+   * The pricing card's "What's included" reveal. grid-template-rows is the
+   * one property that can animate between 0 and the content's natural
+   * height without JS measuring the DOM: 0fr collapses to nothing, 1fr
+   * expands to fit. The inner wrapper needs its own overflow:hidden — that's
+   * what actually clips the content mid-transition, the 0fr row alone
+   * wouldn't reflow it in time.
+   */
+  .pricing-expand {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--dur-slower) var(--ease-out-expo);
+  }
+
+  .pricing-expand[data-expanded="true"] {
+    grid-template-rows: 1fr;
+  }
+
+  .pricing-expand > div {
+    overflow: hidden;
+  }
+
+  .pricing-expand__content {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition:
+      opacity var(--dur-base) var(--ease-standard),
+      transform var(--dur-base) var(--ease-standard);
+  }
+
+  .pricing-expand[data-expanded="true"] .pricing-expand__content {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 80ms;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

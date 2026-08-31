@@ -47,6 +47,23 @@ export const Services: CollectionConfig = {
       },
     },
     {
+      name: "included",
+      type: "array",
+      labels: { singular: "Feature", plural: "What's included" },
+      admin: {
+        description:
+          "Main packages only — the expandable \"What's included\" list on hover/tap. Leave empty for add-ons.",
+      },
+      fields: [
+        {
+          name: "label",
+          type: "text",
+          localized: true,
+          required: true,
+        },
+      ],
+    },
+    {
       name: "isAddon",
       type: "checkbox",
       defaultValue: false,

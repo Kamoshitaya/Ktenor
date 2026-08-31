@@ -2,7 +2,7 @@ import type { Dictionary } from "@/i18n";
 import type { ServiceAddon, ServicePackage } from "@/lib/cms";
 import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
-import { OrderButton } from "./OrderButton";
+import { PricingCard } from "./PricingCard";
 
 /**
  * No "most popular" badge: there is no sales history yet, so the label would
@@ -23,43 +23,19 @@ export function Services({
       title={t.services.title}
       intro={t.services.intro}
     >
-      <ul data-reveal-group className="grid gap-5 lg:grid-cols-2">
-        {services.packages.map((service) => {
-          return (
-            <li key={service.id}>
-              <article className="surface surface-hover edge-accent relative flex h-full flex-col overflow-hidden rounded-[var(--radius-lg)] p-7 sm:p-9">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-                  <h3 className="text-[length:var(--text-h3)]">{service.name}</h3>
-                  <p className="font-display text-[length:var(--text-h3)] tabular">
-                    {service.priceFrom == null ? (
-                      <span className="text-text-secondary">{t.services.onRequest}</span>
-                    ) : (
-                      <>
-                        <span className="text-caption font-body font-normal text-text-muted">
-                          {t.services.from}{" "}
-                        </span>
-                        €{service.priceFrom}
-                      </>
-                    )}
-                  </p>
-                </div>
-
-                <p className="mt-4 max-w-[46ch] text-text-secondary">{service.description}</p>
-
-                {service.timeline ? (
-                  <p className="mt-6 flex items-center gap-2 text-caption text-text-muted">
-                    <span aria-hidden className="size-1.5 rounded-full bg-accent" />
-                    {t.services.timeline}: <span className="tabular">{service.timeline}</span>
-                  </p>
-                ) : null}
-
-                <div className="mt-8 pt-2">
-                  <OrderButton service={service.name} label={t.actions.order} />
-                </div>
-              </article>
-            </li>
-          );
-        })}
+      <ul data-reveal-group className="grid items-start gap-5 lg:grid-cols-2">
+        {services.packages.map((service) => (
+          <li key={service.id}>
+            <PricingCard
+              service={service}
+              fromLabel={t.services.from}
+              onRequestLabel={t.services.onRequest}
+              timelineLabel={t.services.timeline}
+              whatsIncludedLabel={t.services.whatsIncluded}
+              orderLabel={t.actions.order}
+            />
+          </li>
+        ))}
 
         {/* Free-form enquiry — most projects do not arrive pre-labelled. */}
         <li className="lg:col-span-2">

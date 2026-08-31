@@ -79,6 +79,7 @@ const en = {
     from: "from",
     onRequest: "On request",
     timeline: "Timeline",
+    whatsIncluded: "What's included",
     includedTitle: "Included in every project",
     included: [
       "Design from scratch — no templates",
