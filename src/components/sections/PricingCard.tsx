@@ -5,10 +5,14 @@ import type { ServicePackage } from "@/lib/cms";
 import { OrderButton } from "./OrderButton";
 
 /**
- * Hover-to-expand on desktop, tap-to-expand on touch/keyboard — one state
- * covers both: mouseenter/mouseleave drive it for a real pointer, the toggle
- * button drives it everywhere else (and can also close it early while
- * hovering, which is a reasonable extra rather than a bug).
+ * Hover-to-expand on desktop, tap-to-expand on touch/keyboard. Desktop hover
+ * is handled in pure CSS (`.pricing-card:hover` under `@media (hover: hover)`
+ * in globals.css) rather than onMouseEnter/onMouseLeave — mobile browsers
+ * fire a synthetic mouseenter on the first tap to support :hover styling,
+ * which fought the click toggle here (the card would open on tap-1's ghost
+ * hover, then the real click on tap-2 couldn't reliably close it). CSS-only
+ * hover can't do that, since `(hover: hover)` doesn't match touch input.
+ * The toggle button remains the single source of truth for touch/keyboard.
  */
 export function PricingCard({
   service,
@@ -30,11 +34,7 @@ export function PricingCard({
   const hasIncluded = (service.included?.length ?? 0) > 0;
 
   return (
-    <article
-      className="pricing-card surface surface-hover edge-accent relative flex flex-col overflow-hidden rounded-[var(--radius-lg)]"
-      onMouseEnter={() => hasIncluded && setExpanded(true)}
-      onMouseLeave={() => setExpanded(false)}
-    >
+    <article className="pricing-card surface surface-hover edge-accent relative flex flex-col overflow-hidden rounded-[var(--radius-lg)]">
       <div className="p-7 sm:p-9">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
           <h3 className="text-[length:var(--text-h3)]">{service.name}</h3>

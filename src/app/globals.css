@@ -603,6 +603,27 @@
   }
 }
 
+/**
+ * Desktop-only hover expansion, kept in pure CSS rather than JS
+ * mouseenter/mouseleave — those fire as synthetic "ghost" events on a
+ * mobile tap (to support :hover styling), which fought the toggle button's
+ * click handler and left cards stuck open. (hover: hover) only matches a
+ * device with a real, persistent pointer, so this can never fire from touch.
+ */
+@media (hover: hover) and (pointer: fine) {
+  @layer components {
+    .pricing-card:hover .pricing-expand {
+      grid-template-rows: 1fr;
+    }
+
+    .pricing-card:hover .pricing-expand__content {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 80ms;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

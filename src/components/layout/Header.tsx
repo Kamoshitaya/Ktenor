@@ -75,6 +75,12 @@ export function Header({ locale, t }: Props) {
     <header
       className={`sticky top-0 z-[var(--z-header)] transition-[background-color,border-color,backdrop-filter] duration-[var(--dur-slow)] ease-[var(--ease-standard)] ${
         scrolled || open ? "glass border-x-0 border-t-0" : "border-b border-transparent"
+      } ${
+        // The open mobile menu needs to read clearly on its own — blur is a
+        // nice-to-have that some devices skip (see theme-script.tsx's "lite"
+        // probe), but legibility can't depend on it. A near-opaque fill on
+        // top of .glass guarantees contrast either way.
+        open ? "bg-[var(--c-bg-overlay)]/95" : ""
       }`}
     >
       <div className="container-page flex h-[72px] items-center justify-between gap-6">
