@@ -4,15 +4,19 @@ let instance: Lenis | null = null;
 let locks = 0;
 
 /**
- * Scroll locking needs two parts. `lenis.stop()` blocks wheel-driven smooth
- * scroll, but Lenis (in its default, non-wrapper mode) doesn't intercept
- * native touch scrolling — on a phone the page underneath a locked overlay
- * (the mobile menu) could still be dragged with a finger, leaving it out of
- * sync with a header that assumes the page hasn't moved. `overflow: hidden`
- * on the body blocks that natively, and is safe to combine with Lenis here
- * (unlike a plain overflow-only lock) because unlockScroll already calls
- * `resize()` afterwards, so Lenis re-measures instead of keeping whatever
- * scroll-height it cached while the body was collapsed.
+ * Freezes the page in place while locked: stores the current scroll offset
+ * and pins body there with `position: fixed`, rather than `overflow: hidden`.
+ * That distinction matters on iOS Safari specifically — overflow:hidden on
+ * html and body together is a known trigger for the whole page (including
+ * elements that should stay interactive, like the menu's own close button)
+ * going completely unresponsive to touch, not just unscrollable. A fixed
+ * body has no such failure mode and is the standard cross-browser technique
+ * for this.
+ *
+ * Also stops Lenis, since a fixed body doesn't stop it from still trying to
+ * drive wheel-based smooth scroll underneath. unlockScroll restores the
+ * exact scroll position before resuming Lenis and calling `resize()` (the
+ * layout may have changed while locked — intro removed, menu closed).
  *
  * Locks are counted, so the intro and the mobile menu overlapping cannot leave
  * the page unscrollable.
@@ -21,22 +25,27 @@ export function registerLenis(next: Lenis | null) {
   instance = next;
 }
 
+let savedScrollY = 0;
+
 export function lockScroll() {
   locks += 1;
   if (locks === 1) {
+    savedScrollY = window.scrollY;
     instance?.stop();
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${savedScrollY}px`;
+    document.body.style.width = "100%";
   }
 }
 
 export function unlockScroll() {
   locks = Math.max(0, locks - 1);
   if (locks === 0) {
-    document.body.style.overflow = "";
-    document.documentElement.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.width = "";
+    window.scrollTo(0, savedScrollY);
     instance?.start();
-    // The layout may have changed while locked (intro removed, menu closed).
     instance?.resize();
   }
 }
