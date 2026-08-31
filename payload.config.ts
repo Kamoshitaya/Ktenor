@@ -11,6 +11,7 @@ import { Services } from "./src/cms/collections/Services";
 import { Faq } from "./src/cms/collections/Faq";
 import { Work } from "./src/cms/collections/Work";
 import { Leads } from "./src/cms/collections/Leads";
+import { migrations } from "./src/migrations";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -40,6 +41,11 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || "",
     },
+    // In production the adapter never auto-creates tables (by design — see
+    // @payloadcms/db-postgres's connect.js), so committed migrations are the
+    // only way schema reaches the real database. Bundling them here means
+    // they run automatically on deploy instead of needing a manual step.
+    prodMigrations: migrations,
   }),
   sharp,
 });
