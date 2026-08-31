@@ -4,25 +4,34 @@ type Block = { heading: string; body: string[] };
 type PrivacyDoc = { title: string; updated: string; intro: string; blocks: Block[] };
 
 /**
- * Describes only what the site actually does. No cookie-consent language, no
- * analytics clauses, no third-party processors — because none of those exist
- * yet. When the contact form is wired up or analytics is added, this document
- * gets updated in the same commit.
+ * Describes only what the site actually does — no clause here describes
+ * something that isn't real. No cookie-consent language or analytics clauses,
+ * because there is no analytics; every processor actually in use (Resend,
+ * Google Sheets, Neon/Vercel for the CMS and the reviews database) is named
+ * plainly instead of left as boilerplate. When any of that changes — the
+ * contact form's storage, analytics being added — this document is updated
+ * in the same commit, not after the fact.
  *
  * This is a plainly written document, not legal advice; it should be reviewed
  * by a professional before launch.
  */
 const en: PrivacyDoc = {
   title: "Privacy Policy",
-  updated: "Last updated: 8 August 2026",
+  updated: "Last updated: 1 September 2026",
   intro:
     "This site collects as little as possible. Below is exactly what happens to any information it touches — nothing is described here that the site does not actually do.",
   blocks: [
     {
+      heading: "Who is responsible for this",
+      body: [
+        "Ktenor is a one-person studio based in Bratislava, Slovakia. For anything on this page — a question, a request to see or delete your data — ktenorstudio@gmail.com reaches me directly.",
+      ],
+    },
+    {
       heading: "What is stored on your device",
       body: [
-        "Two preferences are saved locally so the site behaves the way you left it: your chosen language and your chosen colour theme.",
-        "They are stored in a cookie on your own device, are read only by this site, and are never sent anywhere or linked to you as a person. Clearing your browser data removes them.",
+        "A few preferences are saved locally so the site behaves the way you left it. Your chosen language and your chosen colour theme are stored in a cookie on your own device, are read only by this site, and are never sent anywhere or linked to you as a person — clearing your browser data removes them.",
+        "A third, whether you have already seen the intro animation, is kept only for the current browser tab and disappears the moment you close it.",
       ],
     },
     {
@@ -36,8 +45,8 @@ const en: PrivacyDoc = {
       heading: "The contact form",
       body: [
         "When you submit the enquiry form, it sends exactly what you filled in: your name, the email address and phone number you chose to give, the service you selected, the budget range and timeline if you set them, and your message. Nothing else is collected, and nothing is taken from your device beyond what you typed.",
-        "That information is used for one purpose — replying to your enquiry and carrying out any work that follows from it. It is emailed to me and recorded in a private spreadsheet so an enquiry cannot be lost if an email fails to arrive. If you leave an email address, an automatic confirmation is sent back to you.",
-        "Two service providers handle this on my behalf: Resend delivers the email, and Google Sheets stores the record. Neither uses your data for their own purposes. Enquiries are kept only as long as they are relevant, and you can ask for yours to be deleted at any time.",
+        "That information is used for one purpose — replying to your enquiry and carrying out any work that follows from it. It is emailed to me, recorded in a private spreadsheet, and saved in the site's own admin panel, so an enquiry cannot be lost if any one of the three fails. If you leave an email address, an automatic confirmation is sent back to you.",
+        "A few service providers handle this on my behalf: Resend delivers the email, Google Sheets stores the spreadsheet record, and the admin panel is a private area of this site itself, backed by a database hosted by Neon and provisioned through Vercel. None of them use your data for their own purposes, and none of these are publicly reachable — only I can sign in and see it. Enquiries are kept only as long as they are relevant, and you can ask for yours to be deleted at any time.",
         "The form also carries a hidden field and measures how long it took to complete. Both exist only to filter out automated spam, and neither identifies you.",
       ],
     },
@@ -66,6 +75,7 @@ const en: PrivacyDoc = {
       body: [
         "Under the GDPR you may request access to any personal data held about you, ask for it to be corrected or deleted, or object to its processing.",
         "In practice, the only personal data I hold is what you have sent me directly. Write to me and it will be handled.",
+        "You can also complain to the data protection authority directly — in Slovakia, the Úrad na ochranu osobných údajov SR (dataprotection.gov.sk) — if you believe your data has been mishandled.",
       ],
     },
     {
@@ -79,15 +89,21 @@ const en: PrivacyDoc = {
 
 const sk: PrivacyDoc = {
   title: "Ochrana osobných údajov",
-  updated: "Naposledy aktualizované: 8. augusta 2026",
+  updated: "Naposledy aktualizované: 1. septembra 2026",
   intro:
     "Tento web zbiera čo najmenej. Nižšie je presne to, čo sa deje s informáciami, ktorých sa dotkne — nie je tu opísané nič, čo web v skutočnosti nerobí.",
   blocks: [
     {
+      heading: "Kto je za to zodpovedný",
+      body: [
+        "Ktenor je jednoosobové štúdio so sídlom v Bratislave. Pri čomkoľvek na tejto stránke — otázka, žiadosť o prístup k vašim údajom alebo o ich vymazanie — ma zastihnete priamo na ktenorstudio@gmail.com.",
+      ],
+    },
+    {
       heading: "Čo sa ukladá vo vašom zariadení",
       body: [
-        "Lokálne sa ukladajú dve nastavenia, aby sa web správal tak, ako ste ho opustili: zvolený jazyk a zvolená farebná téma.",
-        "Sú uložené v cookie priamo vo vašom zariadení, číta ich len tento web, nikam sa neodosielajú a nie sú spojené s vašou osobou. Vymazaním údajov prehliadača zmiznú.",
+        "Lokálne sa ukladá niekoľko nastavení, aby sa web správal tak, ako ste ho opustili. Zvolený jazyk a zvolená farebná téma sú uložené v cookie priamo vo vašom zariadení, číta ich len tento web, nikam sa neodosielajú a nie sú spojené s vašou osobou — vymazaním údajov prehliadača zmiznú.",
+        "Tretie nastavenie, či ste už videli úvodnú animáciu, sa uchováva len pre aktuálnu kartu prehliadača a zmizne hneď po jej zatvorení.",
       ],
     },
     {
@@ -101,8 +117,8 @@ const sk: PrivacyDoc = {
       heading: "Kontaktný formulár",
       body: [
         "Pri odoslaní formulára sa odošle presne to, čo ste vyplnili: meno, e-mail a telefón, ktoré ste sa rozhodli uviesť, zvolená služba, rozpočet a termín, ak ste ich nastavili, a vaša správa. Nič ďalšie sa nezbiera a z vášho zariadenia sa neberie nič nad rámec toho, čo ste napísali.",
-        "Tieto údaje slúžia na jediný účel — odpovedať na váš dopyt a prípadne realizovať prácu, ktorá z neho vyplynie. Posielajú sa mi e-mailom a zaznamenávajú sa do súkromnej tabuľky, aby sa dopyt nestratil, ak by e-mail nedorazil. Ak necháte e-mailovú adresu, príde vám naň automatické potvrdenie.",
-        "Pomáhajú s tým dvaja poskytovatelia: Resend doručuje e-mail a Google Sheets uchováva záznam. Ani jeden nepoužíva vaše údaje na vlastné účely. Dopyty uchovávam len dovtedy, kým sú relevantné, a kedykoľvek môžete požiadať o ich vymazanie.",
+        "Tieto údaje slúžia na jediný účel — odpovedať na váš dopyt a prípadne realizovať prácu, ktorá z neho vyplynie. Posielajú sa mi e-mailom, zaznamenávajú sa do súkromnej tabuľky a ukladajú sa aj v administrácii samotného webu, aby sa dopyt nestratil, ak by niektorý z týchto troch spôsobov zlyhal. Ak necháte e-mailovú adresu, príde vám naň automatické potvrdenie.",
+        "Pomáha s tým niekoľko poskytovateľov: Resend doručuje e-mail, Google Sheets uchováva záznam v tabuľke a administrácia je súkromná časť tohto webu, ktorej dáta sú uložené v databáze hostenej spoločnosťou Neon a sprostredkovanej cez Vercel. Žiadny z nich nevyužíva vaše údaje na vlastné účely a nič z toho nie je verejne dostupné — prihlásiť sa a vidieť to môžem len ja. Dopyty uchovávam len dovtedy, kým sú relevantné, a kedykoľvek môžete požiadať o ich vymazanie.",
         "Formulár tiež obsahuje skryté pole a meria, ako dlho trvalo jeho vyplnenie. Oboje slúži výlučne na filtrovanie automatického spamu a ani jedno vás neidentifikuje.",
       ],
     },
@@ -131,6 +147,7 @@ const sk: PrivacyDoc = {
       body: [
         "Podľa GDPR môžete požiadať o prístup k osobným údajom, ktoré o vás mám, o ich opravu alebo vymazanie, prípadne namietať proti ich spracúvaniu.",
         "V praxi jediné osobné údaje, ktoré mám, sú tie, ktoré ste mi poslali priamo. Napíšte mi a vybavím to.",
+        "Ak sa domnievate, že sa s vašimi údajmi zaobchádzalo nesprávne, môžete sa obrátiť priamo na Úrad na ochranu osobných údajov SR (dataprotection.gov.sk).",
       ],
     },
     {
