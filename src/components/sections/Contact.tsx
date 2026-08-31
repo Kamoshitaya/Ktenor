@@ -3,8 +3,8 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { Dictionary } from "@/i18n";
 import type { Locale } from "@/i18n/config";
+import type { ServicePackage } from "@/lib/cms";
 import { site } from "@/lib/site";
-import { services, type ServiceId } from "@/content/services";
 import { dialCodes } from "@/content/dial-codes";
 import { budgetKeys, validateEnquiry, type EnquiryErrorKey } from "@/lib/enquiry";
 import { Button } from "@/components/ui/Button";
@@ -17,7 +17,15 @@ type Status = "idle" | "sending" | "sent" | "failed" | "throttled";
  * Validation rules come from the shared module, so the instant feedback here
  * and the authoritative check on the server cannot drift apart.
  */
-export function Contact({ t, locale }: { t: Dictionary; locale: Locale }) {
+export function Contact({
+  t,
+  locale,
+  services,
+}: {
+  t: Dictionary;
+  locale: Locale;
+  services: ServicePackage[];
+}) {
   const uid = useId();
   const formRef = useRef<HTMLFormElement>(null);
   const serviceRef = useRef<HTMLSelectElement>(null);
@@ -29,7 +37,7 @@ export function Contact({ t, locale }: { t: Dictionary; locale: Locale }) {
   // A service card was clicked — preselect it and let the anchor do the scroll.
   useEffect(() => {
     function onSelect(event: Event) {
-      const id = (event as CustomEvent<ServiceId>).detail;
+      const id = (event as CustomEvent<string>).detail;
       const select = serviceRef.current;
       if (!select) return;
       select.value = id;
@@ -219,8 +227,8 @@ export function Contact({ t, locale }: { t: Dictionary; locale: Locale }) {
                 {t.contact.fields.servicePlaceholder}
               </option>
               {services.map((service) => (
-                <option key={service.id} value={service.id}>
-                  {t.services.items[service.id].name}
+                <option key={service.id} value={service.name}>
+                  {service.name}
                 </option>
               ))}
             </select>

@@ -1,56 +1,9 @@
 /**
- * Language-independent facts about each service. Names and descriptions live
- * in the dictionaries; prices and timelines live here so they are stated once.
- *
- * Order is display order: ascending by price and complexity.
+ * Services and FAQ used to live here (language-independent facts) plus the
+ * dictionaries (copy). Both now come from the CMS (see src/lib/cms.ts) —
+ * this file keeps only what's still hardcoded: process/principles/advantages
+ * section ids and the demo project registry.
  */
-export const serviceIds = [
-  "mini",
-  "landing",
-  "portfolio",
-  "business",
-  "store",
-  "custom",
-] as const;
-
-export type ServiceId = (typeof serviceIds)[number];
-
-export type Service = {
-  id: ServiceId;
-  /** EUR. `null` means quoted per project. */
-  priceFrom: number | null;
-};
-
-export const services: Service[] = [
-  { id: "mini", priceFrom: 200 },
-  { id: "landing", priceFrom: 400 },
-  { id: "portfolio", priceFrom: 700 },
-  { id: "business", priceFrom: 900 },
-  { id: "store", priceFrom: 2200 },
-  { id: "custom", priceFrom: null },
-];
-
-export const addonIds = [
-  "multilingual",
-  "support",
-  "copywriting",
-  "content",
-  "hosting",
-  "integrations",
-] as const;
-
-export type AddonId = (typeof addonIds)[number];
-
-/** `null` = quoted per project. */
-export const addonPrices: Record<AddonId, number | null> = {
-  multilingual: 150,
-  support: 50,
-  copywriting: null,
-  content: null,
-  hosting: null,
-  integrations: null,
-};
-
 export const processIds = [
   "analysis",
   "planning",
@@ -91,12 +44,3 @@ export const projectIds = ["cafe", "barbershop", "dental", "realestate"] as cons
 export const builtProjectIds = ["cafe", "barbershop"] as const;
 
 export type ProjectId = (typeof projectIds)[number];
-
-export const faqIds = [
-  "timeline",
-  "price",
-  "content",
-  "revisions",
-  "payment",
-  "after",
-] as const;

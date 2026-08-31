@@ -1,10 +1,15 @@
 import type { CollectionConfig } from "payload";
+import { revalidateHomepage } from "@/lib/revalidate-cms";
 
 export const Faq: CollectionConfig = {
   slug: "faq",
   admin: {
     useAsTitle: "question",
     defaultColumns: ["question", "order"],
+  },
+  hooks: {
+    afterChange: [() => revalidateHomepage()],
+    afterDelete: [() => revalidateHomepage()],
   },
   fields: [
     {

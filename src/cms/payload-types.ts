@@ -181,12 +181,14 @@ export interface Service {
    * EUR. Leave empty for "quoted per project".
    */
   priceFrom?: number | null;
-  included?:
-    | {
-        label: string;
-        id?: string | null;
-      }[]
-    | null;
+  /**
+   * Main packages only, e.g. "2–5 pracovných dní". Leave empty for add-ons.
+   */
+  timeline?: string | null;
+  /**
+   * Add-ons only, e.g. "za jazyk", "mesačne". Leave empty for main packages.
+   */
+  note?: string | null;
   /**
    * On for add-ons (multilingual, support, etc.), off for the main packages.
    */
@@ -398,12 +400,8 @@ export interface ServicesSelect<T extends boolean = true> {
   name?: T;
   description?: T;
   priceFrom?: T;
-  included?:
-    | T
-    | {
-        label?: T;
-        id?: T;
-      };
+  timeline?: T;
+  note?: T;
   isAddon?: T;
   order?: T;
   updatedAt?: T;

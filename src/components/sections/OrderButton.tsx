@@ -1,20 +1,20 @@
 "use client";
 
-import type { ServiceId } from "@/content/services";
-
 export const SELECT_SERVICE_EVENT = "ktenor:select-service";
 
 /**
  * Scrolling and pre-selecting are two separate jobs: the anchor does the
  * navigation (so it still works without JS), the event tells the form which
- * service to pick.
+ * service to pick. `service` is the service's display name — it doubles as
+ * the contact form's <option value>, since services now come from the CMS
+ * and have no fixed slug to key off of.
  */
 export function OrderButton({
   service,
   label,
   className,
 }: {
-  service: ServiceId;
+  service: string;
   label: string;
   className?: string;
 }) {
@@ -23,7 +23,7 @@ export function OrderButton({
       href="#contact"
       onClick={() => {
         window.dispatchEvent(
-          new CustomEvent<ServiceId>(SELECT_SERVICE_EVENT, { detail: service }),
+          new CustomEvent<string>(SELECT_SERVICE_EVENT, { detail: service }),
         );
       }}
       className={`inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-line-strong px-5 py-3 text-sm font-medium transition-[background-color,border-color,transform] duration-[var(--dur-base)] ease-[var(--ease-standard)] hover:border-accent hover:bg-[var(--glass-bg-hover)] active:scale-[0.98] ${className ?? ""}`}

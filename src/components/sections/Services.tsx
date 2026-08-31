@@ -1,5 +1,5 @@
 import type { Dictionary } from "@/i18n";
-import { addonIds, addonPrices, services } from "@/content/services";
+import type { ServiceAddon, ServicePackage } from "@/lib/cms";
 import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
 import { OrderButton } from "./OrderButton";
@@ -8,7 +8,13 @@ import { OrderButton } from "./OrderButton";
  * No "most popular" badge: there is no sales history yet, so the label would
  * be invented. Prices are floors, and the disclaimer says so plainly.
  */
-export function Services({ t }: { t: Dictionary }) {
+export function Services({
+  t,
+  services,
+}: {
+  t: Dictionary;
+  services: { packages: ServicePackage[]; addons: ServiceAddon[] };
+}) {
   return (
     <Section
       id="services"
@@ -18,15 +24,14 @@ export function Services({ t }: { t: Dictionary }) {
       intro={t.services.intro}
     >
       <ul data-reveal-group className="grid gap-5 lg:grid-cols-2">
-        {services.map((service) => {
-          const copy = t.services.items[service.id];
+        {services.packages.map((service) => {
           return (
             <li key={service.id}>
               <article className="surface surface-hover edge-accent relative flex h-full flex-col overflow-hidden rounded-[var(--radius-lg)] p-7 sm:p-9">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-                  <h3 className="text-[length:var(--text-h3)]">{copy.name}</h3>
+                  <h3 className="text-[length:var(--text-h3)]">{service.name}</h3>
                   <p className="font-display text-[length:var(--text-h3)] tabular">
-                    {service.priceFrom === null ? (
+                    {service.priceFrom == null ? (
                       <span className="text-text-secondary">{t.services.onRequest}</span>
                     ) : (
                       <>
@@ -39,15 +44,17 @@ export function Services({ t }: { t: Dictionary }) {
                   </p>
                 </div>
 
-                <p className="mt-4 max-w-[46ch] text-text-secondary">{copy.description}</p>
+                <p className="mt-4 max-w-[46ch] text-text-secondary">{service.description}</p>
 
-                <p className="mt-6 flex items-center gap-2 text-caption text-text-muted">
-                  <span aria-hidden className="size-1.5 rounded-full bg-accent" />
-                  {t.services.timeline}: <span className="tabular">{copy.timeline}</span>
-                </p>
+                {service.timeline ? (
+                  <p className="mt-6 flex items-center gap-2 text-caption text-text-muted">
+                    <span aria-hidden className="size-1.5 rounded-full bg-accent" />
+                    {t.services.timeline}: <span className="tabular">{service.timeline}</span>
+                  </p>
+                ) : null}
 
                 <div className="mt-8 pt-2">
-                  <OrderButton service={service.id} label={t.actions.order} />
+                  <OrderButton service={service.name} label={t.actions.order} />
                 </div>
               </article>
             </li>
@@ -99,21 +106,17 @@ export function Services({ t }: { t: Dictionary }) {
           <h3 className="text-[length:var(--text-h3)]">{t.services.addonsTitle}</h3>
           <p className="mt-3 text-sm text-text-muted">{t.services.addonsIntro}</p>
           <ul className="mt-6 divide-y divide-line">
-            {addonIds.map((id) => {
-              const price = addonPrices[id];
-              const copy = t.services.addons[id];
-              return (
-                <li key={id} className="flex items-baseline justify-between gap-6 py-3.5">
-                  <div>
-                    <p className="text-text">{copy.name}</p>
-                    <p className="text-caption text-text-muted">{copy.note}</p>
-                  </div>
-                  <p className="shrink-0 tabular text-text-secondary">
-                    {price === null ? "—" : `${t.services.from} €${price}`}
-                  </p>
-                </li>
-              );
-            })}
+            {services.addons.map((addon) => (
+              <li key={addon.id} className="flex items-baseline justify-between gap-6 py-3.5">
+                <div>
+                  <p className="text-text">{addon.name}</p>
+                  {addon.note ? <p className="text-caption text-text-muted">{addon.note}</p> : null}
+                </div>
+                <p className="shrink-0 tabular text-text-secondary">
+                  {addon.priceFrom == null ? "—" : `${t.services.from} €${addon.priceFrom}`}
+                </p>
+              </li>
+            ))}
           </ul>
         </div>
       </div>

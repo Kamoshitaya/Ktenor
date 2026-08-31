@@ -90,55 +90,9 @@ const en = {
     ],
     addonsTitle: "Add-ons",
     addonsIntro: "Priced separately so the figures above stay honest.",
-    addons: {
-      multilingual: { name: "Extra language", note: "per language" },
-      support: { name: "Ongoing support", note: "per month" },
-      copywriting: { name: "Copywriting", note: "quoted per project" },
-      content: { name: "Content population", note: "quoted per project" },
-      hosting: { name: "Domain & hosting", note: "at cost, set up for you" },
-      integrations: { name: "Features & integrations", note: "quoted per project" },
-    },
     payment: "50% up front, 50% on completion — before the site goes live.",
     disclaimer:
       "Starting prices are indicative. The final price depends on the project scope, functionality and requirements.",
-    items: {
-      mini: {
-        name: "Mini Website / Digital Menu",
-        description:
-          "A single, sharp page for a cafe, barbershop or local business. Everything a customer needs, nothing they don't.",
-        timeline: "2–5 working days",
-      },
-      landing: {
-        name: "Landing Page",
-        description:
-          "One page built to convert: a clear argument, one goal, and no route out but the one you want.",
-        timeline: "5–7 working days",
-      },
-      portfolio: {
-        name: "Portfolio Website",
-        description:
-          "For people whose work should speak first. Quiet interface, generous space, fast galleries.",
-        timeline: "1–2 weeks",
-      },
-      business: {
-        name: "Business / Multi-page Website",
-        description:
-          "From a compact company site to a large multi-page structure — services, cases, team, contact, all of it.",
-        timeline: "2–4 weeks",
-      },
-      store: {
-        name: "Online Store",
-        description:
-          "Catalogue, product pages, cart and checkout. Built so browsing feels effortless and buying feels safe.",
-        timeline: "3–5 weeks",
-      },
-      custom: {
-        name: "Custom Website",
-        description:
-          "Something that doesn't fit a category. Tell me what it needs to do and I'll tell you what it takes.",
-        timeline: "Scoped together",
-      },
-    },
     enquiry: {
       title: "Not sure which one fits?",
       description:
@@ -311,38 +265,6 @@ const en = {
   faq: {
     eyebrow: "FAQ",
     title: "Before you ask.",
-    items: {
-      timeline: {
-        question: "How long will my site take?",
-        answer:
-          "Between two days and five weeks depending on the service — each one lists its own range. The figure holds once the scope is agreed; if something threatens it, you hear about it early.",
-      },
-      price: {
-        question: "Why is the price only a starting figure?",
-        answer:
-          "Because the work is not identical across projects. The listed figure is the honest floor for that type of site; the final number depends on the number of pages, the features and how much of the content you already have.",
-      },
-      content: {
-        question: "Do I need to provide text and images?",
-        answer:
-          "You can, and it keeps the price down. If you would rather not, copywriting and content population are add-ons and I will handle them.",
-      },
-      revisions: {
-        question: "What if I want changes?",
-        answer:
-          "Two rounds of revisions are included in every project. Further rounds are billable. Bug fixes after launch are not revisions and are never charged as such.",
-      },
-      payment: {
-        question: "How does payment work?",
-        answer:
-          "50% up front to start, 50% on completion before the site goes live. No hidden fees between those two points.",
-      },
-      after: {
-        question: "What happens after launch?",
-        answer:
-          "The site is yours. If you want me to keep it updated and monitored, ongoing support is available monthly — but it is optional, never bundled in.",
-      },
-    },
   },
 
   cta: {

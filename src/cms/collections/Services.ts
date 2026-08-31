@@ -1,10 +1,15 @@
 import type { CollectionConfig } from "payload";
+import { revalidateHomepage } from "@/lib/revalidate-cms";
 
 export const Services: CollectionConfig = {
   slug: "services",
   admin: {
     useAsTitle: "name",
     defaultColumns: ["name", "priceFrom", "isAddon", "order"],
+  },
+  hooks: {
+    afterChange: [() => revalidateHomepage()],
+    afterDelete: [() => revalidateHomepage()],
   },
   fields: [
     {
@@ -26,17 +31,20 @@ export const Services: CollectionConfig = {
       },
     },
     {
-      name: "included",
-      type: "array",
-      labels: { singular: "Feature", plural: "Included features" },
-      fields: [
-        {
-          name: "label",
-          type: "text",
-          localized: true,
-          required: true,
-        },
-      ],
+      name: "timeline",
+      type: "text",
+      localized: true,
+      admin: {
+        description: "Main packages only, e.g. \"2–5 pracovných dní\". Leave empty for add-ons.",
+      },
+    },
+    {
+      name: "note",
+      type: "text",
+      localized: true,
+      admin: {
+        description: "Add-ons only, e.g. \"za jazyk\", \"mesačne\". Leave empty for main packages.",
+      },
     },
     {
       name: "isAddon",

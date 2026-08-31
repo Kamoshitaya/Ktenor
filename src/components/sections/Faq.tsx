@@ -1,19 +1,18 @@
 import type { Dictionary } from "@/i18n";
-import { faqIds } from "@/content/services";
+import type { Faq as FaqItem } from "@/cms/payload-types";
 import { Section } from "@/components/ui/Section";
 
 /**
  * Native details/summary: keyboard and screen-reader behaviour comes for free
  * and the answers are in the markup for search engines.
  */
-export function Faq({ t }: { t: Dictionary }) {
+export function Faq({ t, items }: { t: Dictionary; items: FaqItem[] }) {
   return (
     <Section id="faq" eyebrow={t.faq.eyebrow} title={t.faq.title} tone="warm">
       <div data-reveal-group className="max-w-[76ch] divide-y divide-line border-y border-line">
-        {faqIds.map((id) => {
-          const item = t.faq.items[id];
+        {items.map((item) => {
           return (
-            <details key={id} className="group">
+            <details key={item.id} className="group">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-[length:var(--text-h3)] transition-colors duration-[var(--dur-base)] hover:text-accent [&::-webkit-details-marker]:hidden">
                 {item.question}
                 <span

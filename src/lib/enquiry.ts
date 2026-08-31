@@ -1,5 +1,3 @@
-import { serviceIds, type ServiceId } from "@/content/services";
-
 export const budgetKeys = ["under500", "500to1500", "1500to3000", "over3000"] as const;
 export type BudgetKey = (typeof budgetKeys)[number];
 
@@ -61,14 +59,12 @@ export function validateEnquiry(input: Partial<Enquiry>): EnquiryErrorKey[] {
   else if (!EMAIL.test(email)) errors.push("email");
   if (!phone) errors.push("phone");
   else if (!PHONE.test(phone)) errors.push("phone");
-  if (!input.service || !isServiceId(input.service)) errors.push("service");
+  // Services now come from the CMS (no fixed slug list to check against), so
+  // this only confirms something was picked, not which service it was.
+  if (!(input.service ?? "").trim()) errors.push("service");
   if (!input.consent) errors.push("consent");
 
   return errors;
-}
-
-export function isServiceId(value: string): value is ServiceId {
-  return (serviceIds as readonly string[]).includes(value);
 }
 
 export function isBudgetKey(value: string): value is BudgetKey {

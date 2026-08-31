@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
+import { getPayload } from "payload";
+import config from "@payload-config";
 import { site } from "@/lib/site";
 import { getDictionary } from "@/i18n";
-import type { ServiceId } from "@/content/services";
 import { sendEmail as sendResendEmail, escapeHtml } from "@/lib/email";
 import {
   clean,
@@ -103,9 +104,11 @@ export async function POST(request: Request) {
   }
   if (enquiry.budget && !isBudgetKey(enquiry.budget)) enquiry.budget = "";
 
-  // Both run regardless of each other's outcome. Errors are logged with the
-  // enquirer's email so a failure can be traced back to a specific
-  // conversation rather than left as an unexplained gap.
+  // All three run regardless of each other's outcome. Errors are logged with
+  // the enquirer's email so a failure can be traced back to a specific
+  // conversation rather than left as an unexplained gap. Only notified/recorded
+  // determine whether the request counts as delivered — the CMS inbox is a
+  // convenience on top of that, not a required destination.
   const [notified, recorded] = await Promise.all([
     notifyOwner(enquiry).catch((err) => {
       console.error("[contact] notifyOwner failed", { email: enquiry.email, err });
@@ -113,6 +116,10 @@ export async function POST(request: Request) {
     }),
     recordToSheet(enquiry).catch((err) => {
       console.error("[contact] recordToSheet failed", { email: enquiry.email, err });
+      return false;
+    }),
+    saveLead(enquiry).catch((err) => {
+      console.error("[contact] saveLead failed", { email: enquiry.email, err });
       return false;
     }),
   ]);
@@ -164,10 +171,10 @@ function rows(pairs: [string, string][]) {
 /**
  * The lead notification. Every field the visitor could have filled in is
  * shown — the point of this email is that the owner never has to log in
- * anywhere to see the full picture. Service and budget are resolved to their
- * display names via the same dictionary the site itself uses, so the owner
- * reads "Landing Page" and "€500 – 1 500" rather than the raw ids the form
- * submits ("landing", "500to1500").
+ * anywhere to see the full picture. Budget is resolved to its display name
+ * via the same dictionary the site itself uses ("€500 – 1 500" rather than
+ * "500to1500"); service arrives already human-readable, since the contact
+ * form's <option value> is the CMS service's own display name, not an id.
  */
 /**
  * The owner's opening line, pre-filled into the wa.me link below — so
@@ -194,7 +201,7 @@ async function notifyOwner(enquiry: CleanEnquiry) {
   const message = enquiry.message;
 
   const t = await getDictionary(enquiry.locale);
-  const serviceLabel = t.services.items[enquiry.service as ServiceId]?.name ?? enquiry.service;
+  const serviceLabel = enquiry.service || "—";
   const budgetLabel = enquiry.budget
     ? (t.contact.budgets as Record<string, string>)[enquiry.budget] ?? enquiry.budget
     : "—";
@@ -342,4 +349,26 @@ async function recordToSheet(enquiry: CleanEnquiry) {
     }),
   });
   return response.ok;
+}
+
+/**
+ * Persists the enquiry into the CMS's Leads collection, so it shows up
+ * alongside every other kind of submission in one place (/cms). Uses the
+ * Local API, which bypasses Leads' access control (closed to the public
+ * REST/GraphQL API by design) — this route is the only trusted way in.
+ */
+async function saveLead(enquiry: CleanEnquiry): Promise<boolean> {
+  const payload = await getPayload({ config });
+  await payload.create({
+    collection: "leads",
+    data: {
+      name: enquiry.name,
+      email: enquiry.email,
+      phone: enquiry.phone || undefined,
+      service: enquiry.service || undefined,
+      budget: enquiry.budget || undefined,
+      message: enquiry.message || undefined,
+    },
+  });
+  return true;
 }

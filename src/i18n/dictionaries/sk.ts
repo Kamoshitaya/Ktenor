@@ -92,55 +92,9 @@ const sk: Dictionary = {
     ],
     addonsTitle: "Doplnky",
     addonsIntro: "Účtujú sa zvlášť, aby ceny vyššie zostali poctivé.",
-    addons: {
-      multilingual: { name: "Ďalší jazyk", note: "za jazyk" },
-      support: { name: "Priebežná podpora", note: "mesačne" },
-      copywriting: { name: "Písanie textov", note: "cena podľa projektu" },
-      content: { name: "Naplnenie obsahom", note: "cena podľa projektu" },
-      hosting: { name: "Doména a hosting", note: "v nákladovej cene, nastavím za vás" },
-      integrations: { name: "Funkcie a integrácie", note: "cena podľa projektu" },
-    },
     payment: "50 % vopred, 50 % po dokončení — pred spustením webu.",
     disclaimer:
       "Vstupné ceny sú orientačné. Konečná cena závisí od rozsahu projektu, funkcionality a požiadaviek.",
-    items: {
-      mini: {
-        name: "Mini web / Digitálne menu",
-        description:
-          "Jedna presná stránka pre kaviareň, barbershop alebo lokálny podnik. Všetko, čo zákazník potrebuje, a nič navyše.",
-        timeline: "2–5 pracovných dní",
-      },
-      landing: {
-        name: "Landing Page",
-        description:
-          "Jedna stránka postavená na konverziu: jasný argument, jeden cieľ a žiadna iná cesta von než tá, ktorú chcete.",
-        timeline: "5–7 pracovných dní",
-      },
-      portfolio: {
-        name: "Portfóliový web",
-        description:
-          "Pre tých, za koho má hovoriť práca. Tiché rozhranie, veľkorysý priestor, rýchle galérie.",
-        timeline: "1–2 týždne",
-      },
-      business: {
-        name: "Firemný / viacstránkový web",
-        description:
-          "Od kompaktnej firemnej prezentácie po rozsiahlu viacstránkovú štruktúru — služby, referencie, tím, kontakt.",
-        timeline: "2–4 týždne",
-      },
-      store: {
-        name: "E-shop",
-        description:
-          "Katalóg, produktové stránky, košík a objednávka. Postavené tak, aby sa prehliadalo ľahko a nakupovalo bezpečne.",
-        timeline: "3–5 týždňov",
-      },
-      custom: {
-        name: "Web na mieru",
-        description:
-          "Niečo, čo nezapadá do kategórie. Povedzte mi, čo má robiť, a ja poviem, čo si to vyžiada.",
-        timeline: "Určíme spoločne",
-      },
-    },
     enquiry: {
       title: "Neviete, čo si vybrať?",
       description:
@@ -313,38 +267,6 @@ const sk: Dictionary = {
   faq: {
     eyebrow: "Časté otázky",
     title: "Skôr než sa spýtate.",
-    items: {
-      timeline: {
-        question: "Ako dlho bude môj web trvať?",
-        answer:
-          "Od dvoch dní po päť týždňov podľa služby — každá má uvedený vlastný rozsah. Termín platí, keď je dohodnutý rozsah; ak ho niečo ohrozí, dozviete sa to včas.",
-      },
-      price: {
-        question: "Prečo je cena len vstupná?",
-        answer:
-          "Pretože práca nie je pri každom projekte rovnaká. Uvedená suma je poctivá spodná hranica pre daný typ webu; konečné číslo závisí od počtu stránok, funkcií a od toho, koľko obsahu už máte.",
-      },
-      content: {
-        question: "Musím dodať texty a fotografie?",
-        answer:
-          "Môžete a udrží to cenu nižšie. Ak nechcete, písanie textov aj naplnenie obsahom sú doplnkové služby a postarám sa o ne.",
-      },
-      revisions: {
-        question: "Čo ak budem chcieť zmeny?",
-        answer:
-          "Dve kolá úprav sú súčasťou každého projektu. Ďalšie kolá sa účtujú. Opravy chýb po spustení nie sú úpravy a nikdy sa tak neúčtujú.",
-      },
-      payment: {
-        question: "Ako prebieha platba?",
-        answer:
-          "50 % vopred na začiatku, 50 % po dokončení pred spustením webu. Medzi tým žiadne skryté poplatky.",
-      },
-      after: {
-        question: "Čo sa deje po spustení?",
-        answer:
-          "Web je váš. Ak chcete, aby som ho udržiaval a sledoval, priebežná podpora je dostupná mesačne — ale je dobrovoľná, nikdy nie je súčasťou balíka.",
-      },
-    },
   },
 
   cta: {
