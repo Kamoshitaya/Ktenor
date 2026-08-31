@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #f6e8d3;
+  --cream-deep: #eddbb9;
+  --paper: #fbf3e6;
+  --ink: #2b1811;
+  --ink-soft: #5c4433;
+  --ink-muted: #8a705d;
+  --terracotta: #c1633f;
+  --terracotta-deep: #9c4a2c;
+  --gold: #b8863b;
+  --line: rgba(43, 24, 17, 0.14);
+  --line-soft: rgba(43, 24, 17, 0.08);
+
+  --font-serif: var(--font-fraunces);
+  --font-sans: var(--font-work-sans);
+}
+
+@theme inline {
+  --color-cream: var(--cream);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-muted: var(--ink-muted);
+  --color-terracotta: var(--terracotta);
+  --color-terracotta-deep: var(--terracotta-deep);
+  --color-gold: var(--gold);
+  --color-line: var(--line);
+  --font-serif-display: var(--font-serif);
+  --font-sans-body: var(--font-sans);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.font-display {
+  font-family: var(--font-serif);
+}
+
+.container-page {
+  width: 100%;
+  max-width: 1160px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container-page {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Warm grain, applied over any surface — texture without weight. */
+.grain {
+  position: relative;
+}
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* Hero: a warm stone/granite slab built entirely from layered gradients —
+   mottled, matte, no literal photography. */
+.stone-slab {
+  background-color: #8a5a3f;
+  background-image:
+    radial-gradient(120% 90% at 12% 0%, rgba(255, 224, 178, 0.35), transparent 55%),
+    radial-gradient(90% 70% at 90% 15%, rgba(140, 70, 40, 0.55), transparent 60%),
+    radial-gradient(70% 60% at 30% 100%, rgba(60, 30, 18, 0.55), transparent 60%),
+    radial-gradient(50% 50% at 75% 80%, rgba(184, 134, 59, 0.25), transparent 60%),
+    linear-gradient(155deg, #a06a45 0%, #7c4a30 45%, #5c331f 100%);
+}
+
+.card-hover {
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 34px -20px rgba(43, 24, 17, 0.35);
+  border-color: var(--terracotta);
+}
+
+/* Fixed ambient warmth behind the whole page — a few soft, blurred blobs in
+   terracotta and gold so the cream never reads as flat/empty between
+   sections. Never repaints on scroll: fixed + pointer-events: none. */
+.bg-field {
+  position: fixed;
+  inset: -10vh -5vw;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    radial-gradient(38% 30% at 12% 8%, rgba(193, 99, 63, 0.16), transparent 70%),
+    radial-gradient(32% 26% at 90% 22%, rgba(184, 134, 59, 0.14), transparent 70%),
+    radial-gradient(40% 32% at 15% 62%, rgba(184, 134, 59, 0.12), transparent 70%),
+    radial-gradient(34% 30% at 88% 78%, rgba(193, 99, 63, 0.15), transparent 70%),
+    radial-gradient(45% 36% at 50% 100%, rgba(156, 74, 44, 0.1), transparent 70%);
+}
+
+/* Same paper-grain as the hero slab, spread over the full page so every
+   section shares one tactile surface instead of flat colour fields. */
+.bg-grain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* Per-section warmth wash, alternating so consecutive sections don't read
+   as identical flat panels. Sits behind that section's own content only. */
+.section-wash {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.section-wash[data-tone="terracotta"] {
+  background: radial-gradient(52% 60% at 88% 12%, rgba(193, 99, 63, 0.13), transparent 68%);
+}
+.section-wash[data-tone="gold"] {
+  background: radial-gradient(52% 60% at 8% 88%, rgba(184, 134, 59, 0.14), transparent 68%);
+}
+
+/* Scroll reveal: same one-shot IntersectionObserver contract as the main
+   Ktenor site, kept local to this demo since it has no shared JS package. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-reveal][data-revealed] {
+  opacity: 1;
+  transform: none;
+}

@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+:root {
+  --charcoal: #17120e;
+  --charcoal-raised: #1e1811;
+  --charcoal-deep: #0c0906;
+  --ivory: #ece4d8;
+  --ivory-soft: #c7bcac;
+  --ivory-muted: #93876f;
+  --copper: #c1793e;
+  --copper-bright: #dc9958;
+  --copper-deep: #8a5528;
+  --brass: #b3924f;
+  --line: rgba(236, 228, 216, 0.1);
+
+  --font-serif: var(--font-oswald);
+  --font-sans: var(--font-work-sans-bb);
+}
+
+@theme inline {
+  --color-charcoal: var(--charcoal);
+  --color-charcoal-raised: var(--charcoal-raised);
+  --color-charcoal-deep: var(--charcoal-deep);
+  --color-ivory: var(--ivory);
+  --color-ivory-soft: var(--ivory-soft);
+  --color-ivory-muted: var(--ivory-muted);
+  --color-copper: var(--copper);
+  --color-copper-deep: var(--copper-deep);
+  --color-brass: var(--brass);
+  --color-line: var(--line);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--charcoal);
+  color: var(--ivory);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.font-display {
+  font-family: var(--font-serif);
+  letter-spacing: 0.01em;
+}
+
+.container-page {
+  width: 100%;
+  max-width: 1160px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+@media (min-width: 768px) {
+  .container-page {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Fixed ambient warmth behind the whole page. */
+.bg-field {
+  position: fixed;
+  inset: -10vh -5vw;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    radial-gradient(36% 30% at 10% 6%, rgba(193, 121, 62, 0.16), transparent 70%),
+    radial-gradient(30% 26% at 92% 18%, rgba(179, 146, 79, 0.13), transparent 70%),
+    radial-gradient(38% 32% at 12% 64%, rgba(179, 146, 79, 0.12), transparent 70%),
+    radial-gradient(32% 28% at 90% 80%, rgba(193, 121, 62, 0.15), transparent 70%);
+}
+
+.bg-grain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+.section-wash {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.section-wash[data-tone="copper"] {
+  background: radial-gradient(52% 60% at 88% 10%, rgba(193, 121, 62, 0.14), transparent 68%);
+}
+.section-wash[data-tone="brass"] {
+  background: radial-gradient(52% 60% at 8% 90%, rgba(179, 146, 79, 0.14), transparent 68%);
+}
+
+.card-hover {
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 34px -20px rgba(0, 0, 0, 0.6);
+  border-color: var(--copper);
+}
+
+/* Unifies photography pulled from different sources into one warm,
+   slightly desaturated duotone so the gallery reads as one shot brand. */
+.gallery-photo {
+  filter: grayscale(0.35) sepia(0.2) contrast(1.12) brightness(0.9);
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-reveal][data-revealed] {
+  opacity: 1;
+  transform: none;
+}

@@ -1,0 +1,583 @@
+@import "tailwindcss";
+/* Required by Lenis — without it the scroll container is never set up. */
+@import "lenis/dist/lenis.css";
+
+/* ==========================================================================
+   KTENOR — design tokens
+   Dark is the default theme; light is a designed counterpart, not an
+   inversion. Every value here is a decision, not a default.
+   ========================================================================== */
+
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
+/* Also matches a nested [data-theme="dark"], so the Hero can stay dark while
+   the rest of the page is in light mode. */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* --- Surfaces -------------------------------------------------------- */
+  /* Not pure #000: on OLED it smears during scroll. The page itself is
+     painted by .bg-field, a fixed layer — this is only the fallback beneath. */
+  --c-bg: #08090d;
+  --c-bg-raised: #0d0f14;
+  --c-bg-overlay: #12151c;
+
+  /* --- Text ------------------------------------------------------------ */
+  --c-text: #eeeff4; /* 17.2:1 on --c-bg */
+  --c-text-secondary: #a2a8b6; /*  8.2:1 */
+  --c-text-muted: #767e8f; /*  4.8:1 — floor for body-size text */
+
+  /* --- Accent: steel blue, derived from the logo, muted for premium ---- */
+  --c-accent: #6e8fc4; /*  5.9:1 on --c-bg */
+  --c-accent-strong: #8aa7d6;
+  /* Middle step of the logo's three-bar ramp. */
+  --c-accent-mid: #46618f;
+  --c-accent-deep: #2a3a55;
+  --c-accent-contrast: #0b0c11; /* text on a filled accent surface */
+
+  /* --- Lines & silver -------------------------------------------------- */
+  --c-silver: #c9ceda;
+  /* Muted enough not to shout on a premium surface, still 9:1 on the base. */
+  --c-danger: #e0a0a0;
+  --c-danger-border: #d98a8a;
+  --c-danger-bg: rgb(224 160 160 / 0.07);
+  --c-line: rgb(238 239 244 / 0.09);
+  --c-line-strong: rgb(238 239 244 / 0.16);
+
+  /* --- Liquid glass ----------------------------------------------------
+     Reserved for elements that genuinely float over moving content: the
+     header, and overlays. Cards use --surface-* instead, which costs the
+     compositor nothing. */
+  --glass-bg: rgb(238 239 244 / 0.05);
+  --glass-bg-hover: rgb(238 239 244 / 0.09);
+  --glass-border: rgb(238 239 244 / 0.12);
+  --glass-blur: 14px;
+  --glass-saturate: 130%;
+  --glass-shadow: inset 0 1px 0 rgb(238 239 244 / 0.06);
+
+  /* --- Card surfaces — no backdrop-filter, no large shadows ------------- */
+  --surface-bg: rgb(238 239 244 / 0.035);
+  --surface-bg-hover: rgb(238 239 244 / 0.07);
+  --surface-border: rgb(238 239 244 / 0.09);
+  --surface-border-hover: rgb(238 239 244 / 0.16);
+  --surface-shadow: inset 0 1px 0 rgb(238 239 244 / 0.05);
+  --surface-shadow-hover: inset 0 1px 0 rgb(238 239 244 / 0.09);
+
+  /* Primary action. Steel from the logo, lit from above. */
+  --btn-top: #85a2d2;
+  --btn-bottom: #5b7fb8;
+  --btn-top-hover: #96b1dc;
+  --btn-bottom-hover: #6c8ec6;
+  --btn-highlight: rgb(255 255 255 / 0.24);
+
+  --scrim: rgb(8 9 13 / 0.74);
+}
+
+/**
+ * Both fields are declared globally, not per theme: they live as two stacked
+ * fixed layers that cross-fade on a theme switch. A background-image cannot be
+ * transitioned, so swapping one would snap; opacity on two composited layers
+ * costs nothing and reads as a dimmer.
+ *
+ * Dark: cold steel at the top left, deeper blue opposite, and a trace of the
+ * warm amber that appears in the hero render — the same palette, not a new one.
+ */
+:root {
+  /* Ambient wash carried by individual sections. The fixed field only ever
+     covers one viewport, so on a twelve-screen page every screen after the
+     first looked identical — that, not the palette, is what read as flat.
+     These scroll with the content, so they are painted once and never again. */
+  --wash-cool: rgb(110 143 196 / 0.07);
+  --wash-warm: rgb(150 112 74 / 0.055);
+
+  --field-dark: radial-gradient(120% 85% at 50% 45%, transparent 52%, rgb(0 0 0 / 0.38)),
+    radial-gradient(58% 46% at 12% -4%, rgb(110 143 196 / 0.15), transparent 70%),
+    radial-gradient(48% 42% at 88% 18%, rgb(42 58 85 / 0.42), transparent 74%),
+    radial-gradient(72% 55% at 52% 104%, rgb(150 112 74 / 0.06), transparent 70%),
+    linear-gradient(178deg, #08090d 0%, #0a0c11 46%, #08090d 100%);
+
+  /* Light: the same two notes at the same positions — cool steel, warm stone —
+     lifted into off-white. Cream, not yellow; stone, not vintage. */
+  --field-light: radial-gradient(120% 85% at 50% 45%, transparent 58%, rgb(22 23 27 / 0.055)),
+    radial-gradient(56% 44% at 10% -4%, rgb(53 84 127 / 0.1), transparent 70%),
+    radial-gradient(46% 40% at 90% 16%, rgb(190 172 148 / 0.2), transparent 74%),
+    radial-gradient(70% 54% at 50% 104%, rgb(120 130 150 / 0.09), transparent 70%),
+    linear-gradient(178deg, #f7f6f4 0%, #f1f0ed 48%, #f6f5f3 100%);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --wash-cool: rgb(53 84 127 / 0.06);
+  --wash-warm: rgb(186 166 138 / 0.15);
+
+  /* Warm off-white, never pure #fff. Cream rather than grey, but pulled back
+     from anything yellow or vintage. */
+  --c-bg: #f6f5f3;
+  --c-bg-raised: #fbfaf9;
+  --c-bg-overlay: #ffffff;
+
+  --c-text: #16171b; /* 16.2:1 on --c-bg */
+  --c-text-secondary: #4b4f58; /*  7.3:1 */
+  /* Darkened to buy headroom: the warm section wash lifts the background
+     under this text, and at the old value it slipped below AA there. */
+  --c-text-muted: #5f636c; /*  5.6:1 on the base, 5.0:1 over the warm wash */
+
+  --c-accent: #35547f; /*  7.1:1 — blue needs to go dark on light */
+  --c-accent-strong: #24405f;
+  --c-accent-mid: #2a4467;
+  --c-accent-deep: #22344e;
+  --c-accent-contrast: #ffffff;
+
+  --c-silver: #6b7280;
+  --c-danger: #9b2c2c;
+  --c-danger-border: #b04545;
+  --c-danger-bg: rgb(155 44 44 / 0.05);
+  --c-line: rgb(20 22 28 / 0.1);
+  --c-line-strong: rgb(20 22 28 / 0.18);
+
+  --glass-bg: rgb(255 255 255 / 0.7);
+  --glass-bg-hover: rgb(255 255 255 / 0.85);
+  --glass-border: rgb(22 23 27 / 0.08);
+  --glass-shadow: 0 1px 2px rgb(22 23 27 / 0.05);
+
+  /* Translucent, so cards pick up the tint of the field behind them. That is
+     where the depth comes from — not from a shadow under every card. */
+  --surface-bg: rgb(255 255 255 / 0.62);
+  --surface-bg-hover: rgb(255 255 255 / 0.86);
+  --surface-border: rgb(22 23 27 / 0.07);
+  --surface-border-hover: rgb(22 23 27 / 0.13);
+  --surface-shadow: 0 1px 2px rgb(22 23 27 / 0.04);
+  --surface-shadow-hover: 0 6px 20px rgb(22 23 27 / 0.07);
+
+  --btn-top: #3f628f;
+  --btn-bottom: #2b4771;
+  --btn-top-hover: #4a6f9e;
+  --btn-bottom-hover: #34537f;
+  --btn-highlight: rgb(255 255 255 / 0.18);
+
+  --scrim: rgb(22 23 27 / 0.42);
+}
+
+/* Weak GPU: translucent fill + hairline, zero blur.
+   Set at runtime by the capability probe. */
+[data-glass="lite"] {
+  --glass-blur: 0px;
+  --glass-saturate: 100%;
+}
+
+/* Browsers that never had backdrop-filter at all. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --glass-blur: 0px;
+    --glass-saturate: 100%;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-bg-raised: var(--c-bg-raised);
+  --color-bg-overlay: var(--c-bg-overlay);
+
+  --color-text: var(--c-text);
+  --color-text-secondary: var(--c-text-secondary);
+  --color-text-muted: var(--c-text-muted);
+
+  --color-accent: var(--c-accent);
+  --color-accent-strong: var(--c-accent-strong);
+  --color-accent-mid: var(--c-accent-mid);
+  --color-accent-deep: var(--c-accent-deep);
+  --color-accent-contrast: var(--c-accent-contrast);
+
+  --color-silver: var(--c-silver);
+  --color-danger: var(--c-danger);
+  --color-line: var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+
+  --font-display: var(--font-display), "Segoe UI", system-ui, sans-serif;
+  --font-body: var(--font-body), "Segoe UI", system-ui, sans-serif;
+
+  /* Fluid type scale — one ramp, no arbitrary sizes in components. */
+  --text-display: clamp(2.75rem, 1.2rem + 6.4vw, 6rem);
+  --text-h1: clamp(2.25rem, 1.3rem + 4vw, 4rem);
+  --text-h2: clamp(1.75rem, 1.2rem + 2.2vw, 2.75rem);
+  --text-h3: clamp(1.35rem, 1.1rem + 1.1vw, 1.75rem);
+  --text-lead: clamp(1.0625rem, 1rem + 0.5vw, 1.3125rem);
+  --text-body: 1rem;
+  --text-sm: 0.9375rem;
+  --text-caption: 0.8125rem;
+
+  /* Spacious rhythm — this is a premium marketing site, not a dashboard. */
+  --spacing-gutter: clamp(1.25rem, 4vw, 3rem);
+  --spacing-section: clamp(6rem, 10vw, 10rem);
+  --spacing-block: clamp(2.5rem, 4vw, 4.5rem);
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+
+  /* Expo-out everywhere: the curve that reads as "expensive". */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+}
+
+:root {
+  --dur-fast: 160ms;
+  --dur-base: 240ms;
+  --dur-slow: 360ms;
+  --dur-slower: 640ms;
+  /* Exits run at ~65% of entrances so the UI feels responsive. */
+  --dur-exit: 160ms;
+
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 20;
+  --z-header: 40;
+  --z-scrim: 60;
+  --z-modal: 70;
+  --z-cursor: 90;
+  --z-intro: 100;
+
+  --container: 78rem;
+}
+
+@layer base {
+  * {
+    min-width: 0;
+  }
+
+  html {
+    /* Lenis owns smoothness; native smooth scrolling fights it. */
+    scroll-behavior: auto;
+    -webkit-tap-highlight-color: transparent;
+    background-color: var(--c-bg);
+    transition: background-color var(--dur-slow) var(--ease-standard);
+  }
+
+  /* Transparent so the fixed field shows through; html carries the fallback. */
+  body {
+    background-color: transparent;
+    color: var(--c-text);
+    font-family: var(--font-body), "Segoe UI", system-ui, sans-serif;
+    font-size: var(--text-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Theme swap should feel like a dimmer, not a strobe. */
+    transition: color var(--dur-slow) var(--ease-standard);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), "Segoe UI", system-ui, sans-serif;
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Prices, timelines and counters must not jitter as digits change. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background-color: var(--c-accent-deep);
+    color: var(--c-text);
+  }
+
+  [data-theme="light"] ::selection {
+    background-color: var(--c-accent);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* Focus rings are never removed — only made to match the surface. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--c-line-strong);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--c-text-muted);
+    background-clip: content-box;
+  }
+}
+
+@layer components {
+  /**
+   * Real glass. Costs the compositor a backdrop snapshot and a blur on every
+   * frame it moves, so it is reserved for the few elements that actually
+   * float over scrolling content: the header, and overlays.
+   */
+  .glass {
+    background-color: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    /* No manual -webkit- prefix: Lightning CSS adds it from the browser
+       targets, and a hand-written duplicate makes it drop the standard one. */
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  }
+
+  /**
+   * Cards. Reads as glass but costs nothing: a translucent fill that picks up
+   * the field behind it, a hairline, and a one-pixel top highlight. There were
+   * 25 backdrop-filtered elements on this page and that was the single largest
+   * cause of scroll jank.
+   */
+  .surface {
+    background-color: var(--surface-bg);
+    border: 1px solid var(--surface-border);
+    box-shadow: var(--surface-shadow);
+    transition:
+      background-color var(--dur-slow) var(--ease-standard),
+      border-color var(--dur-slow) var(--ease-standard),
+      box-shadow var(--dur-slow) var(--ease-standard),
+      transform var(--dur-slow) var(--ease-out-expo);
+  }
+
+  /* Only one card is hovered at a time, so a softer shadow is affordable
+     here in a way it never was across all of them at once. */
+  .surface-hover:hover {
+    background-color: var(--surface-bg-hover);
+    border-color: var(--surface-border-hover);
+    box-shadow: var(--surface-shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  /**
+   * The page background. Fixed, so scrolling never repaints it, and moved
+   * only by a transform the compositor can handle on its own.
+   */
+  .bg-field {
+    position: fixed;
+    inset: -8vh -2vw;
+    z-index: -1;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .bg-field > * {
+    position: absolute;
+    inset: 0;
+    transition: opacity var(--dur-slow) var(--ease-standard);
+  }
+
+  .bg-field [data-layer="dark"] {
+    background: var(--field-dark);
+    opacity: 1;
+  }
+  .bg-field [data-layer="light"] {
+    background: var(--field-light);
+    opacity: 0;
+  }
+
+  [data-theme="light"] .bg-field [data-layer="dark"] {
+    opacity: 0;
+  }
+  [data-theme="light"] .bg-field [data-layer="light"] {
+    opacity: 1;
+  }
+
+  /* Breaks up banding in the large gradients and adds a little tooth.
+     Fixed and tiled, so it is painted once and never again. */
+  .bg-grain {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Custom cursor. The native one is only hidden once ours is actually
+     running, so a failed script never leaves the page without a pointer. */
+  [data-cursor="custom"],
+  [data-cursor="custom"] * {
+    cursor: none !important;
+  }
+
+  /* Scale, never width/height: animating box dimensions relayouts the page on
+     every frame the pointer moves over a link. */
+  [data-cursor-ring] {
+    --ring-scale: 1;
+    transform-origin: center;
+    transition:
+      scale var(--dur-slow) var(--ease-out-expo),
+      background-color var(--dur-slow) var(--ease-out-expo),
+      border-color var(--dur-slow) var(--ease-out-expo),
+      opacity var(--dur-base) var(--ease-standard);
+    scale: var(--ring-scale);
+  }
+
+  [data-cursor-ring][data-open] {
+    --ring-scale: 1.45;
+    background-color: rgb(from var(--c-accent) r g b / 0.1);
+    border-color: var(--c-accent);
+  }
+
+  [data-cursor-ring][data-press] {
+    --ring-scale: 0.8;
+  }
+
+  /* Scroll reveal. The hidden state is CSS, not JS: adding it after paint
+     would show the element, hide it, then fade it back in. Marking a list
+     `data-reveal-group` opts its items in without per-item attributes. */
+  [data-reveal],
+  [data-reveal-group] > * {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 700ms var(--ease-out-expo) var(--reveal-delay, 0ms),
+      transform 700ms var(--ease-out-expo) var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal][data-revealed],
+  [data-reveal-group] > [data-revealed] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Without JS nothing would ever reveal, so the content stays visible. */
+  .no-js [data-reveal],
+  .no-js [data-reveal-group] > * {
+    opacity: 1;
+    transform: none;
+  }
+
+  /**
+   * Per-section ambient wash. Alternating side and temperature, so the page
+   * cools and warms as it is read rather than holding one tone for twelve
+   * screens. Scrolls with its section, so it costs a single paint.
+   */
+  .section-wash {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    transition: background var(--dur-slow) var(--ease-standard);
+  }
+
+  .section-wash[data-tone="cool"] {
+    background: radial-gradient(46% 58% at 8% 34%, var(--wash-cool), transparent 68%);
+  }
+
+  .section-wash[data-tone="warm"] {
+    background: radial-gradient(46% 58% at 92% 42%, var(--wash-warm), transparent 68%);
+  }
+
+  /**
+   * The logo's steel ramp, standing on the left edge of a card. Grows on
+   * hover via scaleY — one transform, no layout, one card at a time.
+   */
+  .edge-accent::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 24%;
+    bottom: 24%;
+    width: 2px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--c-accent), var(--c-accent-deep));
+    transform: scaleY(0);
+    transition: transform var(--dur-slower) var(--ease-out-expo);
+  }
+
+  .edge-accent:hover::before,
+  .edge-accent:focus-within::before {
+    transform: scaleY(1);
+  }
+
+  /**
+   * A hairline that fades out at both ends instead of stopping dead. Costs the
+   * same as a border and stops long rules from looking like table borders.
+   */
+  .rule-fade {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--c-line-strong) 12%,
+      var(--c-line-strong) 88%,
+      transparent
+    );
+  }
+
+  /**
+   * A rule that grows from the left on hover. scaleX only — animating width
+   * would relayout the header on every pointer pass.
+   */
+  .link-rule {
+    position: relative;
+  }
+
+  .link-rule::after {
+    content: "";
+    position: absolute;
+    left: 0.875rem;
+    right: 0.875rem;
+    bottom: 0.375rem;
+    height: 1px;
+    background-color: currentColor;
+    opacity: 0.5;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-slow) var(--ease-out-expo);
+  }
+
+  .link-rule:hover::after,
+  .link-rule[aria-current]::after {
+    transform: scaleX(1);
+  }
+
+  .container-page {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
