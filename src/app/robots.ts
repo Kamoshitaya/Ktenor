@@ -6,9 +6,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      // Internal reference page and the review-moderation tool — useful to
-      // me, noise (or a login page) in search results.
-      disallow: ["/sk/design", "/en/design", "/admin"],
+      // Internal reference page and the admin panels — useful to me, noise
+      // (or a login page) in search results.
+      disallow: ["/sk/design", "/en/design", "/admin", "/cms"],
     },
     sitemap: `${site.url}/sitemap.xml`,
   };

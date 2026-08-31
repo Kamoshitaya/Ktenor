@@ -46,3 +46,7 @@ media-src/
 
 # local dev server log
 dev.log
+
+# Payload's local-disk media storage — placeholder until Cloudflare R2 is
+# wired in; never belongs in the repo either way.
+media-uploads/

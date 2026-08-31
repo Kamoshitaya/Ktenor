@@ -23,8 +23,9 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip static assets, anything with a file extension, and /admin and /demo
-  // — both live outside [locale] entirely and would otherwise get bounced to
-  // a non-existent /sk/admin/... or /sk/demo/... path.
-  matcher: ["/((?!_next|api|admin|demo|.*\\..*).*)"],
+  // Skip static assets, anything with a file extension, and /admin, /demo
+  // and /cms — all three live outside [locale] entirely and would otherwise
+  // get bounced to a non-existent /sk/admin/... style path. /cms is the
+  // Payload CMS admin panel.
+  matcher: ["/((?!_next|api|admin|demo|cms|.*\\..*).*)"],
 };
