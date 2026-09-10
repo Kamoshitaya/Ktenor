@@ -54,20 +54,18 @@ const en = {
     title: "Client projects.",
     intro:
       "No client work yet, so here are demo builds instead — fictional businesses, designed and coded end to end the same way a real client project would be.",
+    /*
+     * Keyed by ProjectId. Empty until a demo ships — add the entry here (and
+     * in sk.ts) at the same time as builtProjectIds in content/services.ts.
+     */
     projects: {
-      cafe: {
-        name: "Ember & Oak",
+      dental: {
+        name: "Root & Bloom Family Dental",
         description:
-          "A one-page site for a fictional Bratislava coffee house: menu, interior gallery, reviews and contact, built as a demo of the finished product.",
+          "A five-page site for a fictional Bratislava family dental practice: an interactive 3D jaw, a live booking flow with a real calendar, a treatment cost estimator, and the whole thing in Slovak and English.",
         cta: "View the live demo",
       },
-      barbershop: {
-        name: "Forge & Blade",
-        description:
-          "A one-page site for a fictional Bratislava barbershop: services, gallery, team, reviews and a full demo booking flow.",
-        cta: "View the live demo",
-      },
-    },
+    } as Record<string, { name: string; description: string; cta: string } | undefined>,
     comingSoon: "More demo projects on the way.",
   },
 

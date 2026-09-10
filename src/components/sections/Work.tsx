@@ -4,9 +4,8 @@ import { Section } from "@/components/ui/Section";
 import { builtProjectIds, type ProjectId } from "@/content/services";
 
 const THUMBS: Partial<Record<ProjectId, string>> = {
-  cafe: "https://images.unsplash.com/photo-1605088576635-db443afdcab5?q=80&w=1200&auto=format&fit=crop",
-  barbershop:
-    "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=1200&auto=format&fit=crop",
+  dental:
+    "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?q=80&w=1200&auto=format&fit=crop",
 };
 
 /**
@@ -14,6 +13,9 @@ const THUMBS: Partial<Record<ProjectId, string>> = {
  * builds at /demo/<id> — each a genuinely separate brand (own layout, fonts,
  * palette; see that route's own files) rather than a screenshot glued onto
  * this page.
+ *
+ * Nothing renders while builtProjectIds is empty — only the "more on the way"
+ * line below. Add the id here and to builtProjectIds when a demo ships.
  */
 export function Work({ t }: { t: Dictionary }) {
   return (
@@ -21,6 +23,7 @@ export function Work({ t }: { t: Dictionary }) {
       <div data-reveal-group className="grid gap-6 md:grid-cols-2">
         {builtProjectIds.map((id) => {
           const project = t.work.projects[id];
+          if (!project) return null;
           return (
             <a
               key={id}

@@ -1,0 +1,363 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Root & Bloom Family Dental — demo design tokens
+
+   A separate brand from Ktenor: its own palette, type and shapes, loaded only
+   on this route. Warm and soft on purpose — the brief is a family practice,
+   which means the page should read closer to a children's bookshop than to a
+   hospital corridor.
+
+   Contrast was checked pair by pair, not assumed. Coral is the brand's accent
+   but sits at 2.7:1 on cream, so it is never used for text on the page
+   background: fills and decoration only. Deep sage carries the buttons.
+   ========================================================================== */
+
+@theme {
+  /* --- Surfaces: warm cream, never white-white ------------------------- */
+  --color-cream: #fbf6ee;
+  --color-cream-deep: #f4ece0; /* alternating bands, keeps sections apart without lines */
+  --color-surface: #ffffff;
+
+  /* --- Sage / mint: the calm half of the palette ------------------------ */
+  --color-sage-900: #1f3d35;
+  --color-sage-700: #35695a; /* 5.9:1 on cream — primary buttons, links */
+  --color-sage-500: #5b937f;
+  --color-sage-300: #a8ccbc;
+  --color-sage-200: #cfe3d9;
+  --color-sage-100: #e6f0ea;
+
+  /* --- Peach / coral: the warm half, used sparingly --------------------- */
+  --color-coral: #e8785c; /* fills and decoration only */
+  --color-coral-ink: #b84a2e; /* 4.8:1 on cream — the readable version */
+  --color-peach-200: #fbd9cb;
+  --color-peach-100: #fde9e0;
+
+  /* --- Ink -------------------------------------------------------------- */
+  --color-ink: #2a3b34; /* 11.2:1 on cream */
+  --color-ink-soft: #55655d; /*  5.6:1 — secondary copy */
+  --color-ink-faint: #7d8b84; /* decorative only, never body text */
+
+  /* --- Lines ------------------------------------------------------------ */
+  --color-line: #e6ddd0;
+  --color-line-strong: #d5c8b6;
+
+  /* --- Type: rounded sans throughout ------------------------------------
+     Quicksand carries headings — rounded like Varela Round but with a real
+     weight range, which a multi-page hierarchy needs. Nunito Sans reads
+     comfortably at body sizes and shares the soft terminals. */
+  --font-display: var(--font-dental-display), ui-rounded, system-ui, sans-serif;
+  --font-body: var(--font-dental-body), system-ui, sans-serif;
+
+  /* --- Rounded geometry: nothing in this brand has a sharp corner ------- */
+  --radius-soft: 14px;
+  --radius-card: 24px;
+  --radius-pill: 999px;
+  --radius-blob: 42% 58% 63% 37% / 43% 38% 62% 57%;
+
+  /* --- Motion ----------------------------------------------------------- */
+  --ease-gentle: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.14;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* A visible ring everywhere, in the brand's own colour rather than the
+     browser default blue. 3px because the accessible-first style calls for it. */
+  :focus-visible {
+    outline: 3px solid var(--color-sage-700);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  button,
+  a,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  /* iOS zooms the page when a focused input is under 16px. */
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1rem);
+    font-family: inherit;
+    color: var(--color-ink);
+  }
+
+  ::selection {
+    background: var(--color-peach-200);
+    color: var(--color-ink);
+  }
+}
+
+/* ==========================================================================
+   Fluid type scale
+   ========================================================================== */
+
+@layer utilities {
+  .text-display {
+    font-size: clamp(2.4rem, 4.2vw + 1.1rem, 4.1rem);
+  }
+  .text-h2 {
+    font-size: clamp(1.85rem, 2vw + 1.1rem, 2.75rem);
+  }
+  .text-h3 {
+    font-size: clamp(1.2rem, 0.6vw + 1rem, 1.45rem);
+  }
+  .text-lead {
+    font-size: clamp(1.05rem, 0.35vw + 1rem, 1.2rem);
+    line-height: 1.65;
+  }
+  .text-body {
+    line-height: 1.68;
+  }
+
+  /* Tabular figures stop prices and totals from jittering as they animate. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ==========================================================================
+   Components
+   ========================================================================== */
+
+@layer components {
+  .rb-container {
+    width: 100%;
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .rb-container {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  .rb-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    transition:
+      transform 0.35s var(--ease-gentle),
+      box-shadow 0.35s var(--ease-gentle),
+      border-color 0.35s var(--ease-gentle);
+  }
+
+  /* Shadows are warm rather than grey — a neutral shadow on cream reads dirty. */
+  .rb-card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 22px 42px -26px rgb(90 60 40 / 0.35);
+    border-color: var(--color-sage-300);
+  }
+
+  .rb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 48px; /* touch target floor */
+    padding: 0.85rem 1.7rem;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+    font-family: var(--font-display);
+    transition:
+      transform 0.18s var(--ease-gentle),
+      background-color 0.25s var(--ease-gentle),
+      box-shadow 0.25s var(--ease-gentle),
+      color 0.25s var(--ease-gentle);
+  }
+
+  .rb-btn:active {
+    transform: scale(0.97);
+  }
+
+  .rb-btn-primary {
+    background: var(--color-sage-700);
+    color: var(--color-cream);
+    box-shadow: 0 10px 22px -12px rgb(31 61 53 / 0.7);
+  }
+
+  .rb-btn-primary:hover {
+    background: var(--color-sage-900);
+    box-shadow: 0 14px 26px -12px rgb(31 61 53 / 0.8);
+  }
+
+  .rb-btn-coral {
+    background: var(--color-coral);
+    color: #ffffff;
+    box-shadow: 0 10px 22px -12px rgb(184 74 46 / 0.65);
+  }
+
+  /* The coral fill only clears 4.5:1 against white once it darkens on hover,
+     so the resting state pairs it with a heavier weight and a large size. */
+  .rb-btn-coral:hover {
+    background: var(--color-coral-ink);
+  }
+
+  .rb-btn-ghost {
+    background: transparent;
+    color: var(--color-sage-700);
+    border: 2px solid var(--color-sage-300);
+  }
+
+  .rb-btn-ghost:hover {
+    background: var(--color-sage-100);
+    border-color: var(--color-sage-500);
+  }
+
+  .rb-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.95rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--color-sage-100);
+    color: var(--color-sage-900);
+    border: 1px solid transparent;
+    transition:
+      background-color 0.25s var(--ease-gentle),
+      color 0.25s var(--ease-gentle),
+      border-color 0.25s var(--ease-gentle);
+  }
+
+  .rb-chip-active {
+    background: var(--color-sage-700);
+    color: var(--color-cream);
+  }
+
+  .rb-field {
+    width: 100%;
+    background: var(--color-surface);
+    border: 2px solid var(--color-line);
+    border-radius: var(--radius-soft);
+    padding: 0.85rem 1rem;
+    min-height: 48px;
+    transition:
+      border-color 0.25s var(--ease-gentle),
+      box-shadow 0.25s var(--ease-gentle);
+  }
+
+  .rb-field:focus {
+    outline: none;
+    border-color: var(--color-sage-500);
+    box-shadow: 0 0 0 4px var(--color-sage-100);
+  }
+
+  .rb-field-error {
+    border-color: var(--color-coral-ink);
+  }
+
+  .rb-field-error:focus {
+    border-color: var(--color-coral-ink);
+    box-shadow: 0 0 0 4px var(--color-peach-100);
+  }
+
+  /* Section rhythm: generous, because the density dial for this brand is low. */
+  .rb-section {
+    padding-block: clamp(4rem, 7vw, 7rem);
+  }
+}
+
+/* ==========================================================================
+   Decoration
+   ========================================================================== */
+
+/* The soft blobs behind the hero. Kept as background-image gradients on a
+   blurred element rather than SVG so nothing repaints during scroll. */
+.rb-blob {
+  position: absolute;
+  border-radius: var(--radius-blob);
+  filter: blur(56px);
+  opacity: 0.6;
+  will-change: transform;
+}
+
+@keyframes rb-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2.5%, -3.5%, 0) scale(1.06);
+  }
+}
+
+.rb-drift {
+  animation: rb-drift 14s var(--ease-soft-in-out) infinite;
+}
+
+.rb-drift-slow {
+  animation: rb-drift 19s var(--ease-soft-in-out) infinite reverse;
+}
+
+/* Thin sage rule used under section eyebrows. */
+.rb-rule::after {
+  content: "";
+  display: block;
+  width: 42px;
+  height: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--color-coral);
+  margin-top: 0.7rem;
+}
+
+/* ==========================================================================
+   Reduced motion
+   Everything decorative stops; nothing that carries meaning disappears.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .rb-drift,
+  .rb-drift-slow {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

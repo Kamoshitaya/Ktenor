@@ -40,7 +40,7 @@ export const advantageIds = [
  */
 export const projectIds = ["cafe", "barbershop", "dental", "realestate"] as const;
 
-/** Only demos that actually exist render; the rest are future work. */
-export const builtProjectIds = ["cafe", "barbershop"] as const;
-
 export type ProjectId = (typeof projectIds)[number];
+
+/** Only demos that actually exist render; the rest are future work. */
+export const builtProjectIds: readonly ProjectId[] = ["dental"];

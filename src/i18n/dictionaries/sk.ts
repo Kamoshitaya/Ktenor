@@ -57,16 +57,10 @@ const sk: Dictionary = {
     intro:
       "Klientske projekty zatiaľ chýbajú, tak sú tu aspoň ukážky — fiktívne podniky, navrhnuté a naprogramované od začiatku do konca rovnako ako pri skutočnej zákazke.",
     projects: {
-      cafe: {
-        name: "Ember & Oak",
+      dental: {
+        name: "Root & Bloom Family Dental",
         description:
-          "Jednostránkový web pre fiktívnu bratislavskú kaviareň: menu, galéria interiéru, recenzie a kontakt — ukážka hotového produktu.",
-        cta: "Pozrieť živé demo",
-      },
-      barbershop: {
-        name: "Forge & Blade",
-        description:
-          "Jednostránkový web pre fiktívne bratislavské holičstvo: služby, galéria, tím, recenzie a plnohodnotný ukážkový rezervačný formulár.",
+          "Päťstránkový web pre fiktívnu bratislavskú rodinnú zubnú ambulanciu: interaktívny 3D model čeľuste, objednávanie so živým kalendárom, kalkulačka ceny ošetrenia — a všetko po slovensky aj po anglicky.",
         cta: "Pozrieť živé demo",
       },
     },
