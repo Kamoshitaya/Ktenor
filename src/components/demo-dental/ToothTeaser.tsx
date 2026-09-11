@@ -61,7 +61,13 @@ export function ToothTeaser() {
           align="center"
         />
 
-        <div className="mt-12 grid items-center gap-8 lg:grid-cols-[1.25fr_1fr]">
+        {/*
+          Aligned to the top, not centred: the treatment card below the hotspot
+          list appears and disappears, and with items-center that changing
+          column height re-centres the canvas beside it — the model visibly
+          jumped ~50px every time a tooth was picked.
+        */}
+        <div className="mt-12 grid items-start gap-8 lg:grid-cols-[1.25fr_1fr]">
           <Reveal>
             <div
               ref={holder}
