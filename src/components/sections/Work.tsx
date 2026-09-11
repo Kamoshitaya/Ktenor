@@ -3,9 +3,14 @@ import type { Dictionary } from "@/i18n";
 import { Section } from "@/components/ui/Section";
 import { builtProjectIds, type ProjectId } from "@/content/services";
 
+/**
+ * Drawn per project in that project's own palette, not stock photography and
+ * not a screenshot. A stock photo of a stranger's mouth says nothing about
+ * what was built, and a screenshot shrunk to a thumbnail is unreadable; an
+ * illustration can show the one thing the demo is actually about.
+ */
 const THUMBS: Partial<Record<ProjectId, string>> = {
-  dental:
-    "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?q=80&w=1200&auto=format&fit=crop",
+  dental: "/work/root-bloom.svg",
 };
 
 /**
@@ -36,6 +41,10 @@ export function Work({ t }: { t: Dictionary }) {
                   alt={project.name}
                   fill
                   sizes="(min-width: 768px) 50vw, 100vw"
+                  /* The tiles are SVG, which the image optimiser refuses to
+                     touch unless dangerouslyAllowSVG is set. They are ours and
+                     a few KB each, so there is nothing to optimise anyway. */
+                  unoptimized
                   className="object-cover transition-transform duration-[var(--dur-slower)] ease-[var(--ease-out-expo)] group-hover:scale-[1.03]"
                 />
               </div>
