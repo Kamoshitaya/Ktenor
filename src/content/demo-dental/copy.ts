@@ -86,6 +86,13 @@ export const copy = {
     },
     toothHint: { sk: "Ťahajte pre otočenie", en: "Drag to rotate" },
     toothCta: { sk: "Zobraziť ošetrenie", en: "See the treatment" },
+    /* Stands in for the model when it cannot be drawn — a dropped download,
+       or a browser with no WebGL context left to give. The list of teeth
+       beside it still works, so the section keeps doing its job. */
+    toothFallback: {
+      sk: "Model sa nepodarilo načítať. Vyberte zub zo zoznamu vedľa.",
+      en: "The model could not load. Pick a tooth from the list instead.",
+    },
 
     servicesTitle: { sk: "Čo u nás vyriešite", en: "What we take care of" },
     servicesLead: {

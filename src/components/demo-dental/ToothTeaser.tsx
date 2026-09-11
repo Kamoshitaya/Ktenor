@@ -7,6 +7,7 @@ import { copy } from "@/content/demo-dental/copy";
 import { hotspots, TOOTH_COUNT } from "@/content/demo-dental/teeth";
 import { treatments } from "@/content/demo-dental/services";
 import { useDental } from "./DentalContext";
+import { SceneBoundary } from "./SceneBoundary";
 import { Icon, Reveal, SectionHeading } from "./ui";
 
 /* three.js has no business running on the server, and it should not sit in the
@@ -20,12 +21,30 @@ function hotspotForIndex(index: number | null) {
   return hotspots.find((h) => h.index === index || h.index === mirrored) ?? null;
 }
 
+/**
+ * Can this browser give us a context at all? Asking costs one, so it is
+ * handed straight back — on a machine that has run out (a dozen tabs of 3D
+ * will do it) the answer is no, and we want the fallback rather than a black
+ * rectangle and a console full of renderer errors.
+ */
+function webglWorks() {
+  try {
+    const probe = document.createElement("canvas");
+    const gl = probe.getContext("webgl2") ?? probe.getContext("webgl");
+    if (!gl) return false;
+    (gl as WebGLRenderingContext).getExtension("WEBGL_lose_context")?.loseContext();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function ToothTeaser() {
   const { t, go } = useDental();
   const reduceMotion = useReducedMotion() ?? false;
   const [hovered, setHovered] = useState<number | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
-  const [inView, setInView] = useState(false);
+  const [stage, setStage] = useState<"waiting" | "ready" | "unsupported">("waiting");
   const holder = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,7 +54,7 @@ export function ToothTeaser() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
-          setInView(true);
+          setStage(webglWorks() ? "ready" : "unsupported");
           observer.disconnect();
         }
       },
@@ -50,6 +69,13 @@ export function ToothTeaser() {
   const treatment = activeHotspot
     ? treatments.find((item) => item.id === activeHotspot.treatmentId)
     : null;
+
+  const sceneFallback = (
+    <div className="flex h-full flex-col items-center justify-center gap-3 px-8 text-center text-sage-200">
+      <Icon name="tooth" size={40} />
+      <p className="max-w-[26ch] text-sm leading-relaxed">{t(copy.home.toothFallback)}</p>
+    </div>
+  );
 
   return (
     <section className="rb-section bg-cream-deep">
@@ -76,25 +102,31 @@ export function ToothTeaser() {
                  which keeps the frame seamless while the model loads. */
               className="relative aspect-4/3 overflow-hidden rounded-[var(--radius-card)] border border-sage-900/20 bg-[#16302a] sm:aspect-16/10"
             >
-              {inView ? (
-                <ToothScene
-                  hovered={hovered}
-                  selected={selected}
-                  onHover={setHovered}
-                  onSelect={(index) =>
-                    setSelected((current) => (current === index ? null : index))
-                  }
-                  reduceMotion={reduceMotion}
-                />
+              {stage === "ready" ? (
+                /* The hint sits inside the boundary too — telling someone to
+                   drag a model that failed to load is worse than saying
+                   nothing. */
+                <SceneBoundary fallback={sceneFallback}>
+                  <ToothScene
+                    hovered={hovered}
+                    selected={selected}
+                    onHover={setHovered}
+                    onSelect={(index) =>
+                      setSelected((current) => (current === index ? null : index))
+                    }
+                    reduceMotion={reduceMotion}
+                  />
+                  <p className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-cream/15 px-3 py-1 text-[0.72rem] font-semibold text-cream backdrop-blur-sm">
+                    {t(copy.home.toothHint)}
+                  </p>
+                </SceneBoundary>
+              ) : stage === "unsupported" ? (
+                sceneFallback
               ) : (
                 <div className="grid h-full place-items-center text-sage-300">
                   <Icon name="tooth" size={44} />
                 </div>
               )}
-
-              <p className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-cream/15 px-3 py-1 text-[0.72rem] font-semibold text-cream backdrop-blur-sm">
-                {t(copy.home.toothHint)}
-              </p>
             </div>
           </Reveal>
 
