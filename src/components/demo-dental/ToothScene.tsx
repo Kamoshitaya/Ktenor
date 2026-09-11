@@ -31,15 +31,24 @@ const MODEL_URL = "/demo-dental/lower-jaw.glb";
  * own normals, back faces only. The tooth then occludes all of it except the
  * rim that pokes past its silhouette — so the shape is the tooth's real outline
  * by construction, and anything in front still covers it, with no x-ray effect.
- * Two shells of decreasing opacity turn a hard line into a soft glow; a
- * post-processing pass would blur it more smoothly, but it would also cost a
- * composer, another dependency, and the canvas's transparency over the page.
+ * Two shells of decreasing opacity turn a hard line into a soft glow.
+ *
+ * A post-processing outline was built and measured against this, since it
+ * blurs more smoothly: @react-three/postprocessing with a pair of Outline
+ * effects, one per side of the crossfade. It was dropped. Mounting the
+ * composer threw inside react-three-fiber and, worse, killed pointer picking
+ * outright — no tooth ever reported a hover again. Two dependencies and a
+ * broken raycaster is a poor trade for a softer edge, so the hull stayed.
+ *
+ * The glow is pure white and the viewport behind it is dark. White was the
+ * brief from the start; over the original white card it was simply invisible,
+ * white enamel on white, so the ground moved rather than the colour.
  */
 
 /** Thin and bright, then wide and faint — together they read as a soft glow. */
 const SHELLS = [
-  { thickness: 0.014, alpha: 1 },
-  { thickness: 0.042, alpha: 0.5 },
+  { thickness: 0.013, alpha: 1 },
+  { thickness: 0.04, alpha: 0.42 },
 ];
 
 const OUTLINE_VERTEX = /* glsl */ `
@@ -76,7 +85,7 @@ function ToothOutline({ geometry, active }: { geometry: BufferGeometry; active: 
             fragmentShader: OUTLINE_FRAGMENT,
             uniforms: {
               uThickness: { value: shell.thickness },
-              uColor: { value: new Color("#e6f6ff") },
+              uColor: { value: new Color("#ffffff") },
               uOpacity: { value: 0 },
             },
             transparent: true,
@@ -273,10 +282,13 @@ export default function ToothScene({
       {/* Key from the front left for the enamel highlight, a cool rim behind to
           lift the arch off the card, and a warm bounce that keeps the gum pink
           rather than grey. */}
-      <ambientLight intensity={0.72} />
-      <directionalLight position={[-3.5, 6, 5]} intensity={1.7} />
-      <directionalLight position={[5, 2.5, -4]} intensity={0.45} color="#cfe3d9" />
-      <directionalLight position={[0, -3.5, 2.5]} intensity={0.35} color="#f0a99f" />
+      {/* Tuned for the dark viewport: less ambient than a bright card wants,
+          a stronger key, and a cool rim doing the work of lifting the arch off
+          the ground behind it. */}
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[-3.5, 6, 5]} intensity={1.95} />
+      <directionalLight position={[5, 2.5, -4]} intensity={0.62} color="#cfe3d9" />
+      <directionalLight position={[0, -3.5, 2.5]} intensity={0.34} color="#f0a99f" />
 
       <Suspense fallback={null}>
         <Rig

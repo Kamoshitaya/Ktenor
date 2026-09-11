@@ -71,7 +71,10 @@ export function ToothTeaser() {
           <Reveal>
             <div
               ref={holder}
-              className="relative aspect-4/3 overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface sm:aspect-16/10"
+              /* Dark ground, so a white outline on white enamel has something
+                 to read against. It also matches the canvas's own clear colour,
+                 which keeps the frame seamless while the model loads. */
+              className="relative aspect-4/3 overflow-hidden rounded-[var(--radius-card)] border border-sage-900/20 bg-[#16302a] sm:aspect-16/10"
             >
               {inView ? (
                 <ToothScene
@@ -89,7 +92,7 @@ export function ToothTeaser() {
                 </div>
               )}
 
-              <p className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-sage-900/75 px-3 py-1 text-[0.72rem] font-semibold text-cream">
+              <p className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-cream/15 px-3 py-1 text-[0.72rem] font-semibold text-cream backdrop-blur-sm">
                 {t(copy.home.toothHint)}
               </p>
             </div>
