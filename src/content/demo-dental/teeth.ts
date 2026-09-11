@@ -2,9 +2,12 @@ import type { CategoryId } from "./services";
 import type { Localized } from "./types";
 
 /**
- * The 3D arch is generated from maths rather than a modelled asset — sixteen
- * teeth placed around an ellipse, so there is no mesh to download. These
- * entries mark the three that are interactive and say what they link to.
+ * The 3D arch is a scanned mandible split into sixteen crowns plus the gum
+ * (see scripts/jaw). Every crown is pickable; these three entries mark the
+ * ones that carry a caption and a link into the treatment list.
+ *
+ * Indices run along the arch, so 0 is the back right third molar, 7 and 8 are
+ * the two central incisors, and 15 is the back left third molar.
  */
 export type ToothHotspot = {
   /** Index along the arch, 0 = patient's back right, 15 = back left. */
@@ -18,7 +21,7 @@ export type ToothHotspot = {
 
 export const hotspots: ToothHotspot[] = [
   {
-    index: 1,
+    index: 0,
     label: { sk: "Zub múdrosti", en: "Wisdom tooth" },
     note: {
       sk: "Tlačí, nezmestí sa alebo sa zapaľuje ďasno okolo neho.",
@@ -28,7 +31,7 @@ export const hotspots: ToothHotspot[] = [
     category: "emergency",
   },
   {
-    index: 4,
+    index: 2,
     label: { sk: "Stolička", en: "Molar" },
     note: {
       sk: "Najčastejšie miesto kazu. Bolesť na sladké alebo studené patrí sem.",

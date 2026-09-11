@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
+import { ContactShadows, Environment, Lightformer, OrbitControls, useGLTF } from "@react-three/drei";
 import {
   BackSide,
   Color,
@@ -17,15 +17,16 @@ import { TOOTH_COUNT } from "@/content/demo-dental/teeth";
 const MODEL_URL = "/demo-dental/lower-jaw.glb";
 
 /**
- * A real scanned mandible: a 575k-triangle ASCII STL decimated to 60k, split
- * into one mesh per tooth plus the gum, and written to GLB by
- * scripts/stl2glb.mjs.
+ * A real scanned mandible: a 575k-triangle ASCII STL decimated to 140k, split
+ * into one mesh per tooth plus the gum, and written to GLB by scripts/jaw.
  *
  * The split is what makes this section work. While the scan was a single fused
  * shell the highlight had to be a distance field around a point, which drew a
  * round blob that did not match any tooth and bled onto its neighbours. With
  * separate meshes the raycaster resolves the exact tooth and the highlight can
- * be a true silhouette outline.
+ * be a true silhouette outline. Where the cuts come from — a plane at each
+ * contact along the arch, and the gum line traced along the gingival sulcus —
+ * is written up in scripts/jaw/arch.mjs and scripts/jaw/segment.mjs.
  *
  * The outline is an inverted hull: the tooth is drawn again, expanded along its
  * own normals, back faces only. The tooth then occludes all of it except the
@@ -93,6 +94,9 @@ function ToothOutline({ geometry, active }: { geometry: BufferGeometry; active: 
                tooth it belongs to, nor the shell behind it. */
             side: BackSide,
             depthWrite: false,
+            /* The glow is a UI mark, not a surface. Tone mapping would pull
+               its pure white down to grey along with the rest of the frame. */
+            toneMapped: false,
           }),
       ),
     [],
@@ -170,13 +174,18 @@ function Jaw({
     <group rotation={[-Math.PI / 2, 0, 0]}>
       {gum && (
         <mesh geometry={gum}>
+          {/* Gum reads as gum through subsurface scattering, which is out of
+              budget here. Sheen over a soft clearcoat fakes the same damp,
+              slightly translucent surface for a fraction of the cost. */}
           <meshPhysicalMaterial
-            color="#c9756e"
-            roughness={0.52}
-            clearcoat={0.35}
-            clearcoatRoughness={0.45}
-            sheen={0.5}
-            sheenColor="#e79a92"
+            color="#bd6a68"
+            roughness={0.62}
+            clearcoat={0.45}
+            clearcoatRoughness={0.55}
+            sheen={0.85}
+            sheenRoughness={0.7}
+            sheenColor="#f0a29c"
+            envMapIntensity={0.55}
             metalness={0}
           />
         </mesh>
@@ -203,11 +212,17 @@ function Jaw({
                 onSelect(index);
               }}
             >
+              {/* Enamel is a glassy layer over a duller body, and the clearcoat
+                  is that layer: sharp reflections of the environment on top
+                  while the base stays soft enough not to look like plastic. */}
               <meshPhysicalMaterial
-                color="#f7f3e8"
-                roughness={0.16}
-                clearcoat={0.9}
-                clearcoatRoughness={0.12}
+                color="#f4eee0"
+                roughness={0.34}
+                clearcoat={1}
+                clearcoatRoughness={0.07}
+                sheen={0.25}
+                sheenColor="#fffaf0"
+                envMapIntensity={1.15}
                 metalness={0}
               />
             </mesh>
@@ -249,6 +264,67 @@ function Rig({
   );
 }
 
+/**
+ * A studio built out of emissive panels instead of an HDR file.
+ *
+ * Enamel only looks like enamel when its clearcoat has something to reflect,
+ * and lights alone reflect nothing — lit by lamps only, the arch came out
+ * flat and plastic. A downloaded environment map would fix that at the cost
+ * of another request and a megabyte; four rectangles cost neither.
+ */
+function Studio() {
+  return (
+    <Environment resolution={256} frames={1}>
+      <color attach="background" args={["#0d1c19"]} />
+      {/* Broad key overhead: the long soft highlight down the face of a crown. */}
+      <Lightformer
+        form="rect"
+        intensity={5}
+        color="#ffffff"
+        scale={[9, 5, 1]}
+        position={[0, 6, 3]}
+        rotation={[-Math.PI / 2.1, 0, 0]}
+      />
+      {/* Cool wrap from behind, so the arch separates from the dark card. */}
+      <Lightformer
+        form="rect"
+        intensity={2.6}
+        color="#bfe0d6"
+        scale={[7, 4, 1]}
+        position={[-5, 2, -4]}
+        rotation={[0, -Math.PI / 2.6, 0]}
+      />
+      <Lightformer
+        form="rect"
+        intensity={2.2}
+        color="#cfe6ff"
+        scale={[7, 4, 1]}
+        position={[5, 2, -4]}
+        rotation={[0, Math.PI / 2.6, 0]}
+      />
+      {/* Bounce from below keeps the gum pink rather than grey. Barely tinted,
+          deliberately: a saturated pink panel here is the one the enamel
+          reflects, and every fissure across a molar came back coral. */}
+      <Lightformer
+        form="circle"
+        intensity={0.8}
+        color="#efdcd4"
+        scale={[6, 6, 1]}
+        position={[0, -4, 2]}
+        rotation={[Math.PI / 2, 0, 0]}
+      />
+      {/* Straight-on fill: the bright vertical catch down each crown. */}
+      <Lightformer
+        form="rect"
+        intensity={1.7}
+        color="#ffffff"
+        scale={[5, 6, 1]}
+        position={[0, 1, 7]}
+      />
+    </Environment>
+  );
+}
+
 export type ToothSceneProps = {
   hovered: number | null;
   selected: number | null;
@@ -279,18 +355,15 @@ export default function ToothScene({
       onPointerDown={() => setTouched(true)}
       style={{ opacity: ready ? 1 : 0, transition: "opacity 600ms ease" }}
     >
-      {/* Key from the front left for the enamel highlight, a cool rim behind to
-          lift the arch off the card, and a warm bounce that keeps the gum pink
-          rather than grey. */}
-      {/* Tuned for the dark viewport: less ambient than a bright card wants,
-          a stronger key, and a cool rim doing the work of lifting the arch off
-          the ground behind it. */}
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[-3.5, 6, 5]} intensity={1.95} />
-      <directionalLight position={[5, 2.5, -4]} intensity={0.62} color="#cfe3d9" />
-      <directionalLight position={[0, -3.5, 2.5]} intensity={0.34} color="#f0a99f" />
+      {/* The environment does most of the shading now; these only shape it — a
+          key from the front left for the enamel highlight, and a dim cool fill
+          so nothing in shadow goes fully black. */}
+      <ambientLight intensity={0.22} />
+      <directionalLight position={[-3.5, 6, 5]} intensity={1.1} />
+      <directionalLight position={[5, 2.5, -4]} intensity={0.35} color="#cfe3d9" />
 
       <Suspense fallback={null}>
+        <Studio />
         <Rig
           paused={paused}
           reduceMotion={reduceMotion}
@@ -298,6 +371,17 @@ export default function ToothScene({
           selected={selected}
           onHover={onHover}
           onSelect={onSelect}
+        />
+        {/* Grounds the arch. Without it the model floats in the dark, which is
+            most of why the earlier render read as a loose game asset. */}
+        <ContactShadows
+          position={[0, -0.68, 0]}
+          scale={7}
+          resolution={512}
+          blur={2.6}
+          opacity={0.55}
+          far={1.6}
+          color="#04120e"
         />
       </Suspense>
 

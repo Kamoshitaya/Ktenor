@@ -1,25 +1,35 @@
 import { readFileSync, writeFileSync } from "node:fs";
+import { archCurve, archFrame, planeSegmenter } from "./arch.mjs";
+import { splitGum } from "./segment.mjs";
 
 /**
- * ASCII STL -> GLB, decimated and split into one mesh per tooth.
+ * ASCII STL -> GLB: a scanned mandible, decimated for the web and split into
+ * one mesh per tooth plus the gum.
  *
- * The source is a ~575k-triangle dental scan: fine for a print, far too heavy
- * for a web page, and a single fused shell with no objects in it. Splitting is
- * the point of this script — with separate meshes the raycaster can hit one
- * tooth, and a silhouette outline has something to outline.
+ * The split is the whole point. As one fused shell the raycaster can only
+ * report "the jaw", so the hover highlight had to be a blob around a guessed
+ * point, which matched no tooth and bled onto its neighbours. With separate
+ * meshes a hover resolves to exactly one tooth and the outline has a real
+ * silhouette to trace.
  *
- * Segmentation is two rules. Anything below the gum line is gum. Everything
- * above it joins the nearest crown tip, which follows the real shape of a
- * tooth far better than slicing the arch into equal angular wedges: the
- * boundary lands in the interdental gap, where the nearest tip genuinely
- * changes, instead of at an arbitrary angle.
+ * How the two boundaries are found is in arch.mjs and segment.mjs. The fifteen
+ * contact angles below were read off a panoramic unwrap of this scan and then
+ * checked tooth by tooth; they belong to this file, not to the algorithm.
  *
- * Usage: node stl2glb.mjs in.stl out.glb [targetTriangles] [toothCount]
+ * Usage: node scripts/jaw/stl2glb.mjs in.stl out.glb [targetTriangles]
  */
 
-const [, , inputPath, outputPath, targetArg, teethArg] = process.argv;
-const TARGET = Number(targetArg ?? 60000);
-const TOOTH_COUNT = Number(teethArg ?? 16);
+const [, , inputPath, outputPath, targetArg] = process.argv;
+const TARGET = Number(targetArg ?? 140000);
+
+/**
+ * Where one crown ends and the next begins, in degrees along the arch,
+ * starting from the back molar on the patient's right. Sixteen teeth.
+ */
+const CONTACT_ANGLES = [
+  21.52, 34.98, 54.44, 76.75, 98.36, 117.33, 134.63, 146.22,
+  160.96, 176.78, 193.78, 215.01, 233.28, 250.97, 258.93,
+];
 
 /* ---------- 1. Parse ------------------------------------------------------ */
 
@@ -27,7 +37,6 @@ const text = readFileSync(inputPath, "latin1");
 const rawX = [];
 const rawY = [];
 const rawZ = [];
-
 {
   const NEEDLE = "vertex ";
   let pos = 0;
@@ -119,10 +128,8 @@ for (let attempt = 0; attempt < 14; attempt += 1) {
 
 console.log(
   "decimated to:",
-  best.triangles.toLocaleString(),
-  "triangles /",
-  best.count.toLocaleString(),
-  "vertices",
+  best.triangles.toLocaleString(), "triangles /",
+  best.count.toLocaleString(), "vertices",
 );
 
 /* ---------- 3. Centre and scale ------------------------------------------- */
@@ -131,8 +138,9 @@ const TARGET_WIDTH = 4.6;
 const scale = TARGET_WIDTH / Math.max(...extent);
 const centre = [(min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2];
 
-const positions = new Float32Array(best.count * 3);
-for (let i = 0; i < best.count; i += 1) {
+const vertexCount = best.count;
+const positions = new Float32Array(vertexCount * 3);
+for (let i = 0; i < vertexCount; i += 1) {
   positions[i * 3] = (best.sumX[i] / best.counts[i] - centre[0]) * scale;
   positions[i * 3 + 1] = (best.sumY[i] / best.counts[i] - centre[1]) * scale;
   positions[i * 3 + 2] = (best.sumZ[i] / best.counts[i] - centre[2]) * scale;
@@ -142,8 +150,8 @@ for (let i = 0; i < best.count; i += 1) {
 
 /* Computed before the split, deliberately: normals averaged per part would
    disagree along every cut and draw a visible seam between tooth and gum. */
-const normals = new Float32Array(best.count * 3);
 const indices = best.indices;
+const normals = new Float32Array(vertexCount * 3);
 
 for (let t = 0; t < indices.length; t += 3) {
   const a = indices[t] * 3;
@@ -167,8 +175,7 @@ for (let t = 0; t < indices.length; t += 3) {
     normals[base + 2] += nz;
   }
 }
-
-for (let i = 0; i < best.count; i += 1) {
+for (let i = 0; i < vertexCount; i += 1) {
   const x = normals[i * 3];
   const y = normals[i * 3 + 1];
   const z = normals[i * 3 + 2];
@@ -178,102 +185,45 @@ for (let i = 0; i < best.count; i += 1) {
   normals[i * 3 + 2] = z / len;
 }
 
-/* ---------- 5. Segment into teeth ----------------------------------------- */
+/* ---------- 5. Segment ---------------------------------------------------- */
 
-let zMin = Infinity;
-let zMax = -Infinity;
-for (let i = 0; i < best.count; i += 1) {
-  const z = positions[i * 3 + 2];
-  if (z < zMin) zMin = z;
-  if (z > zMax) zMax = z;
+const mesh = { positions, normals, indices, vertexCount };
+const frame = archFrame(mesh);
+const curve = archCurve(mesh, frame);
+const toothAt = planeSegmenter(frame, curve, CONTACT_ANGLES);
+const { isGum, gumVertices } = splitGum(mesh);
+
+const TOOTH_COUNT = CONTACT_ANGLES.length + 1;
+const toothOf = new Int32Array(vertexCount).fill(-1);
+for (let v = 0; v < vertexCount; v += 1) {
+  if (isGum[v]) continue;
+  toothOf[v] = Math.min(TOOTH_COUNT - 1, toothAt(positions[v * 3], positions[v * 3 + 1]));
 }
-const gumLine = zMin + (zMax - zMin) * 0.62;
+console.log(
+  "gum vertices:", gumVertices.toLocaleString(),
+  `(${((gumVertices / vertexCount) * 100).toFixed(1)}%) | teeth:`, TOOTH_COUNT,
+);
 
-/* Arch centre from the crowns only: the base slab runs deeper than the arch
-   and would drag the centre backwards, skewing every angle measured from it. */
-let sumX = 0;
-let sumY = 0;
-let crowns = 0;
-for (let i = 0; i < best.count; i += 1) {
-  if (positions[i * 3 + 2] < gumLine) continue;
-  sumX += positions[i * 3];
-  sumY += positions[i * 3 + 1];
-  crowns += 1;
-}
-const centreX = sumX / crowns;
-const centreY = sumY / crowns;
-
-/* The widest gap between crown angles is the opening of the horseshoe. */
-const angles = [];
-for (let i = 0; i < best.count; i += 1) {
-  if (positions[i * 3 + 2] < gumLine) continue;
-  angles.push(Math.atan2(positions[i * 3 + 1] - centreY, positions[i * 3] - centreX));
-}
-angles.sort((a, b) => a - b);
-
-let gapStart = angles[angles.length - 1];
-let gapSize = angles[0] + Math.PI * 2 - gapStart;
-for (let i = 1; i < angles.length; i += 1) {
-  const size = angles[i] - angles[i - 1];
-  if (size > gapSize) {
-    gapSize = size;
-    gapStart = angles[i - 1];
-  }
-}
-const archStart = gapStart + gapSize;
-const archSpan = Math.PI * 2 - gapSize;
-
-/* One anchor per tooth: the highest crown vertex in each angular slice. */
-const anchors = Array.from({ length: TOOTH_COUNT }, () => null);
-const anchorZ = new Float32Array(TOOTH_COUNT).fill(-Infinity);
-
-for (let i = 0; i < best.count; i += 1) {
-  const z = positions[i * 3 + 2];
-  if (z < gumLine) continue;
-  const angle = Math.atan2(positions[i * 3 + 1] - centreY, positions[i * 3] - centreX);
-  let offset = angle - archStart;
-  while (offset < 0) offset += Math.PI * 2;
-  if (offset > archSpan) continue;
-
-  const bin = Math.min(TOOTH_COUNT - 1, Math.floor((offset / archSpan) * TOOTH_COUNT));
-  if (z > anchorZ[bin]) {
-    anchorZ[bin] = z;
-    anchors[bin] = [positions[i * 3], positions[i * 3 + 1], z];
-  }
-}
-
-const validAnchors = anchors.filter(Boolean);
-console.log("tooth anchors found:", validAnchors.length, "/", TOOTH_COUNT);
-
-/* Assign every triangle: below the gum line it is gum, above it joins the
-   nearest crown tip. Horizontal distance only — comparing in 3D lets a tall
-   incisor tip win over the molar the triangle actually sits on. */
+/*
+ * Assigning triangles.
+ *
+ * A face with any corner on the gum goes to the gum, whatever the other two
+ * corners say. Letting the majority win there drags the boundary a row of
+ * triangles up over the cervical line, and a ring of gum-coloured enamel
+ * around every crown is exactly the seam this is meant to remove.
+ *
+ * Between two teeth the rule has to be the opposite. Those faces have no gum
+ * corner at all, and sending them to the gum for want of agreement painted a
+ * pink stripe down every contact — sixteen crowns outlined in gum. They go to
+ * whichever tooth holds two of the three corners.
+ */
 const partOf = new Int32Array(indices.length / 3).fill(-1);
-
-for (let t = 0; t < indices.length / 3; t += 1) {
-  const a = indices[t * 3];
-  const b = indices[t * 3 + 1];
-  const c = indices[t * 3 + 2];
-  const cx = (positions[a * 3] + positions[b * 3] + positions[c * 3]) / 3;
-  const cy = (positions[a * 3 + 1] + positions[b * 3 + 1] + positions[c * 3 + 1]) / 3;
-  const cz = (positions[a * 3 + 2] + positions[b * 3 + 2] + positions[c * 3 + 2]) / 3;
-
-  if (cz < gumLine) continue; // stays gum
-
-  let nearest = -1;
-  let nearestDistance = Infinity;
-  for (let bin = 0; bin < TOOTH_COUNT; bin += 1) {
-    const anchor = anchors[bin];
-    if (!anchor) continue;
-    const dx = anchor[0] - cx;
-    const dy = anchor[1] - cy;
-    const distance = dx * dx + dy * dy;
-    if (distance < nearestDistance) {
-      nearestDistance = distance;
-      nearest = bin;
-    }
-  }
-  partOf[t] = nearest;
+for (let t = 0; t < partOf.length; t += 1) {
+  const a = toothOf[indices[t * 3]];
+  const b = toothOf[indices[t * 3 + 1]];
+  const c = toothOf[indices[t * 3 + 2]];
+  if (a === -1 || b === -1 || c === -1) continue;
+  partOf[t] = a === b || a === c ? a : b === c ? b : a;
 }
 
 /* ---------- 6. Build one part per tooth, plus the gum --------------------- */
@@ -317,13 +267,13 @@ const parts = [];
 const gumTriangles = buckets.get(-1) ?? [];
 if (gumTriangles.length) parts.push(buildPart("Gum", gumTriangles));
 
-for (let bin = 0; bin < TOOTH_COUNT; bin += 1) {
-  const triangleIds = buckets.get(bin);
+for (let tooth = 0; tooth < TOOTH_COUNT; tooth += 1) {
+  const triangleIds = buckets.get(tooth);
   if (!triangleIds?.length) {
-    console.warn("  tooth", bin, "has no triangles — skipped");
+    console.warn("  tooth", tooth, "has no triangles — skipped");
     continue;
   }
-  parts.push(buildPart(`Tooth_${String(bin).padStart(2, "0")}`, triangleIds));
+  parts.push(buildPart(`Tooth_${String(tooth).padStart(2, "0")}`, triangleIds));
 }
 
 console.log(
@@ -343,9 +293,9 @@ const meshes = [];
 const nodes = [];
 
 for (const part of parts) {
-  const vertexCount = part.positions.length / 3;
+  const partVertices = part.positions.length / 3;
   const indexArray =
-    vertexCount > 65535 ? new Uint32Array(part.indices) : new Uint16Array(part.indices);
+    partVertices > 65535 ? new Uint32Array(part.indices) : new Uint16Array(part.indices);
 
   const pushView = (typed, target) => {
     const offset = pad4(binLength);
@@ -362,7 +312,7 @@ for (const part of parts) {
 
   const pMin = [Infinity, Infinity, Infinity];
   const pMax = [-Infinity, -Infinity, -Infinity];
-  for (let i = 0; i < vertexCount; i += 1) {
+  for (let i = 0; i < partVertices; i += 1) {
     for (let c = 0; c < 3; c += 1) {
       const v = part.positions[i * 3 + c];
       if (v < pMin[c]) pMin[c] = v;
@@ -373,15 +323,15 @@ for (const part of parts) {
   accessors.push({
     bufferView: posView,
     componentType: 5126,
-    count: vertexCount,
+    count: partVertices,
     type: "VEC3",
     min: pMin,
     max: pMax,
   });
-  accessors.push({ bufferView: nrmView, componentType: 5126, count: vertexCount, type: "VEC3" });
+  accessors.push({ bufferView: nrmView, componentType: 5126, count: partVertices, type: "VEC3" });
   accessors.push({
     bufferView: idxView,
-    componentType: vertexCount > 65535 ? 5125 : 5123,
+    componentType: partVertices > 65535 ? 5125 : 5123,
     count: part.indices.length,
     type: "SCALAR",
   });
@@ -426,7 +376,5 @@ const binHeader = Buffer.alloc(8);
 binHeader.writeUInt32LE(bin.length, 0);
 binHeader.writeUInt32LE(0x004e4942, 4); // "BIN"
 
-const glb = Buffer.concat([header, jsonHeader, jsonPadded, binHeader, bin]);
-writeFileSync(outputPath, glb);
-
-console.log("wrote:", outputPath, `${(glb.length / 1024 / 1024).toFixed(2)} MB`);
+writeFileSync(outputPath, Buffer.concat([header, jsonHeader, jsonPadded, binHeader, bin]));
+console.log("wrote:", outputPath);
