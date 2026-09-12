@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { copy } from "@/content/demo-dental/copy";
 import { treatments, type Treatment } from "@/content/demo-dental/services";
 import { useDental } from "./DentalContext";
@@ -16,35 +16,83 @@ type Line = {
   subtotal: number;
 };
 
+const COUNT_MS = 550;
+const money = (value: number) => Math.round(value).toLocaleString("sk-SK");
+
+/* Layout effects warn during SSR, and this one only matters once painted. */
+const useBeforePaint = typeof window === "undefined" ? useEffect : useLayoutEffect;
+
 /**
- * Counts to the new figure rather than snapping. Written to a ref instead of
- * state so sixty frames of animation do not trigger sixty React renders.
+ * Counts to the new figure rather than snapping.
+ *
+ * Correctness first, animation second. React renders the real total, so that
+ * is what stands whatever the animation does or fails to do; the count then
+ * plays over the top and always lands back on `value`. The earlier version
+ * inverted this — motion's animate() on a MotionValue owned the text, wrote
+ * its first frame over React's, and if the tween never advanced the estimate
+ * stayed one step behind, showing a price that was simply wrong.
+ *
+ * A tween cannot advance in a background tab, because requestAnimationFrame
+ * does not fire there. Hence the timer: whatever happens to the frames, the
+ * figure settles on the true one. This is a price, and a price caught
+ * mid-count is a wrong price.
+ *
+ * It writes through a ref rather than state — sixty frames of counting
+ * should not be sixty React renders.
  */
 function AnimatedTotal({ value }: { value: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const motionValue = useMotionValue(value);
+  const shown = useRef(value);
   const reduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    const unsubscribe = motionValue.on("change", (latest) => {
-      if (ref.current) ref.current.textContent = Math.round(latest).toLocaleString("sk-SK");
-    });
-    return unsubscribe;
-  }, [motionValue]);
+  /* React has just painted the new total. Put back what the eye last saw so
+     the count starts from there, instead of flashing the answer and
+     jumping backwards to count up to it. */
+  useBeforePaint(() => {
+    const element = ref.current;
+    if (element && !reduceMotion && shown.current !== value) {
+      element.textContent = money(shown.current);
+    }
+  }, [value, reduceMotion]);
 
   useEffect(() => {
-    if (reduceMotion) {
-      motionValue.jump(value);
+    const element = ref.current;
+    if (!element) return;
+
+    const settle = () => {
+      shown.current = value;
+      element.textContent = money(value);
+    };
+    if (reduceMotion || shown.current === value) {
+      settle();
       return;
     }
-    const controls = animate(motionValue, value, {
-      duration: 0.55,
-      ease: [0.22, 1, 0.36, 1],
-    });
-    return () => controls.stop();
-  }, [value, motionValue, reduceMotion]);
 
-  return <span ref={ref}>{Math.round(value).toLocaleString("sk-SK")}</span>;
+    const from = shown.current;
+    const started = performance.now();
+    let frame = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - started) / COUNT_MS);
+      if (t === 1) {
+        settle();
+        return;
+      }
+      /* Quartic ease-out: the quick-then-settle shape the rest of the demo
+         moves with, close enough to its cubic-bezier by eye. */
+      shown.current = from + (value - from) * (1 - Math.pow(1 - t, 4));
+      element.textContent = money(shown.current);
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    const guard = setTimeout(settle, COUNT_MS + 120);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(guard);
+    };
+  }, [value, reduceMotion]);
+
+  return <span ref={ref}>{money(value)}</span>;
 }
 
 export function CostCalculator() {
