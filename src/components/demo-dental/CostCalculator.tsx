@@ -148,7 +148,15 @@ export function CostCalculator() {
               </fieldset>
 
               <div className="mt-6 grid gap-5 border-t border-line pt-6 sm:grid-cols-2">
-                <div>
+                {/*
+                  Switched off until something priced per tooth is on the list.
+                  Ten of the twenty-four treatments are; the rest are charged
+                  per visit, and multiplying those by a tooth count would be
+                  wrong. Left live, the counter reads as broken instead —
+                  the number climbs and the total sits still, which is exactly
+                  how it was reported.
+                */}
+                <div className={hasPerTooth ? "" : "opacity-55"}>
                   <label
                     htmlFor="rb-teeth"
                     className="block font-display text-sm font-bold text-sage-900"
@@ -158,7 +166,7 @@ export function CostCalculator() {
                   <div className="mt-2 flex items-center gap-3">
                     <StepButton
                       onClick={() => setTeeth((n) => Math.max(1, n - 1))}
-                      disabled={teeth <= 1}
+                      disabled={!hasPerTooth || teeth <= 1}
                       label={t({ sk: "Menej zubov", en: "Fewer teeth" })}
                       symbol="−"
                     />
@@ -170,12 +178,14 @@ export function CostCalculator() {
                     </output>
                     <StepButton
                       onClick={() => setTeeth((n) => Math.min(12, n + 1))}
-                      disabled={teeth >= 12}
+                      disabled={!hasPerTooth || teeth >= 12}
                       label={t({ sk: "Viac zubov", en: "More teeth" })}
                       symbol="+"
                     />
                   </div>
-                  <p className="mt-2 text-xs text-ink-soft">{t(copy.services.calcTeethHint)}</p>
+                  <p className="mt-2 text-xs text-ink-soft">
+                    {t(hasPerTooth ? copy.services.calcTeethHint : copy.services.calcTeethIdle)}
+                  </p>
                 </div>
 
                 <div>

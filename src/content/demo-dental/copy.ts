@@ -128,6 +128,13 @@ export const copy = {
       sk: "Vzťahuje sa len na ošetrenia účtované za zub.",
       en: "Applies only to treatments charged per tooth.",
     },
+    /* Shown while the counter is switched off, which it is until something
+       priced per tooth is picked. Without it the counter looks broken: the
+       number goes up and the total does not move. */
+    calcTeethIdle: {
+      sk: "Zatiaľ ste nevybrali ošetrenie účtované za zub.",
+      en: "You haven't picked a treatment charged per tooth yet.",
+    },
     calcInsurance: { sk: "Mám poistenie s príspevkom na stomatológiu", en: "My insurance contributes to dental care" },
     calcInsuranceHint: {
       sk: "Odpočíta orientačných 15 % z preventívnych výkonov.",
