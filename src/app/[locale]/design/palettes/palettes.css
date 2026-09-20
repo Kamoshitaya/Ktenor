@@ -1,0 +1,205 @@
+/* ==========================================================================
+   Palette candidates for the redesign — dark theme only, for choosing between.
+   Each block re-declares the same tokens the site already runs on, scoped to
+   one wrapper. Nothing here is imported by the site; when one is picked its
+   values move into globals.css and this file goes.
+   ========================================================================== */
+
+.palette {
+  color-scheme: dark;
+  color: var(--c-text);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.palette::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--field);
+}
+
+/* --- Ember: fire on graphite ---------------------------------------------
+   One hot colour doing the pointing, amber for money, and a cold steel line
+   kept from the logo so the page does not read as uniformly orange. */
+[data-palette="ember"] {
+  --c-bg: #0b0c10;
+  --c-bg-raised: #14120f;
+  --c-bg-overlay: #1b1813;
+
+  --c-text: #f3efe9;
+  --c-text-secondary: #ada79d;
+  --c-text-muted: #837d73;
+
+  --c-accent: #ff6b2c;
+  --c-accent-strong: #ff8a52;
+  --c-accent-mid: #c4451a;
+  --c-accent-deep: #5a2210;
+  --c-accent-contrast: #140c06;
+
+  --c-gold: #ffb347;
+  --c-gold-deep: #d98f2b;
+  --c-gold-contrast: #1a1206;
+
+  --c-silver: #8aa0c6;
+  --c-line: rgb(243 239 233 / 0.09);
+  --c-line-strong: rgb(243 239 233 / 0.18);
+
+  --surface-bg: rgb(255 140 80 / 0.045);
+  --surface-bg-hover: rgb(255 140 80 / 0.085);
+  --surface-border: rgb(243 239 233 / 0.09);
+  --surface-border-hover: rgb(255 107 44 / 0.42);
+  --surface-shadow: inset 0 1px 0 rgb(255 200 170 / 0.07);
+  --surface-shadow-hover: inset 0 1px 0 rgb(255 200 170 / 0.13);
+  --surface-glow-hover: 0 22px 52px -18px rgb(255 107 44 / 0.45);
+
+  --btn-top: #ff8442;
+  --btn-bottom: #e8511b;
+  --btn-top-hover: #ff9559;
+  --btn-bottom-hover: #f5622c;
+  --btn-highlight: rgb(255 255 255 / 0.26);
+
+  --field: radial-gradient(64% 48% at 8% -6%, rgb(255 107 44 / 0.2), transparent 70%),
+    radial-gradient(52% 44% at 96% 12%, rgb(91 141 239 / 0.14), transparent 74%),
+    radial-gradient(80% 56% at 50% 108%, rgb(255 179 71 / 0.09), transparent 72%),
+    linear-gradient(178deg, #0b0c10 0%, #100e0d 48%, #0b0c10 100%);
+}
+
+/* --- Voltage: orange against cyan -----------------------------------------
+   Two bright colours of equal weight. Cyan carries the interaction, orange
+   carries the money, so warm and cold never compete for the same job. */
+[data-palette="voltage"] {
+  --c-bg: #08090c;
+  --c-bg-raised: #0e1117;
+  --c-bg-overlay: #141922;
+
+  --c-text: #edf1f5;
+  --c-text-secondary: #9fabbb;
+  --c-text-muted: #75808f;
+
+  --c-accent: #22d3ee;
+  --c-accent-strong: #5ae3f7;
+  --c-accent-mid: #0e9cb4;
+  --c-accent-deep: #0b4b58;
+  --c-accent-contrast: #04141a;
+
+  --c-gold: #ff7a1a;
+  --c-gold-deep: #d95f0a;
+  --c-gold-contrast: #150801;
+
+  --c-silver: #b6c2d1;
+  --c-line: rgb(237 241 245 / 0.1);
+  --c-line-strong: rgb(237 241 245 / 0.2);
+
+  --surface-bg: rgb(34 211 238 / 0.04);
+  --surface-bg-hover: rgb(34 211 238 / 0.09);
+  --surface-border: rgb(237 241 245 / 0.1);
+  --surface-border-hover: rgb(34 211 238 / 0.45);
+  --surface-shadow: inset 0 1px 0 rgb(180 240 255 / 0.08);
+  --surface-shadow-hover: inset 0 1px 0 rgb(180 240 255 / 0.15);
+  --surface-glow-hover: 0 22px 52px -18px rgb(34 211 238 / 0.4);
+
+  --btn-top: #3ddcf2;
+  --btn-bottom: #12aec9;
+  --btn-top-hover: #5ae6fa;
+  --btn-bottom-hover: #1cc0dc;
+  --btn-highlight: rgb(255 255 255 / 0.3);
+
+  --field: radial-gradient(60% 46% at 4% -4%, rgb(34 211 238 / 0.17), transparent 70%),
+    radial-gradient(56% 46% at 98% 16%, rgb(255 122 26 / 0.16), transparent 74%),
+    radial-gradient(84% 58% at 52% 110%, rgb(34 211 238 / 0.08), transparent 72%),
+    linear-gradient(178deg, #08090c 0%, #0b0e14 48%, #08090c 100%);
+}
+
+/* --- Aurora: gradient dusk ------------------------------------------------
+   A violet base with orange-to-pink light across it. The most fashionable of
+   the three and the one most likely to look like everything else. */
+[data-palette="aurora"] {
+  --c-bg: #120f1c;
+  --c-bg-raised: #1a1528;
+  --c-bg-overlay: #221b33;
+
+  --c-text: #f1ecf9;
+  --c-text-secondary: #aca4c2;
+  --c-text-muted: #817a96;
+
+  --c-accent: #b794fb;
+  --c-accent-strong: #cdb2ff;
+  --c-accent-mid: #8b5cf6;
+  --c-accent-deep: #40277a;
+  --c-accent-contrast: #100a1c;
+
+  --c-gold: #fb923c;
+  --c-gold-deep: #d97428;
+  --c-gold-contrast: #1a0f05;
+
+  --c-silver: #c3bad6;
+  --c-line: rgb(241 236 249 / 0.1);
+  --c-line-strong: rgb(241 236 249 / 0.2);
+
+  --surface-bg: rgb(183 148 251 / 0.05);
+  --surface-bg-hover: rgb(183 148 251 / 0.1);
+  --surface-border: rgb(241 236 249 / 0.1);
+  --surface-border-hover: rgb(183 148 251 / 0.45);
+  --surface-shadow: inset 0 1px 0 rgb(230 215 255 / 0.08);
+  --surface-shadow-hover: inset 0 1px 0 rgb(230 215 255 / 0.15);
+  --surface-glow-hover: 0 22px 56px -18px rgb(168 85 247 / 0.5);
+
+  --btn-top: #c4a3ff;
+  --btn-bottom: #8b5cf6;
+  --btn-top-hover: #d2b8ff;
+  --btn-bottom-hover: #9b6ffa;
+  --btn-highlight: rgb(255 255 255 / 0.28);
+
+  --field: radial-gradient(62% 48% at 6% -6%, rgb(251 146 60 / 0.16), transparent 70%),
+    radial-gradient(58% 48% at 94% 10%, rgb(168 85 247 / 0.28), transparent 74%),
+    radial-gradient(70% 50% at 66% 96%, rgb(236 72 153 / 0.14), transparent 72%),
+    linear-gradient(178deg, #120f1c 0%, #171227 48%, #120f1c 100%);
+}
+
+/* The heading treatment each palette would use, so the comparison is not
+   only swatches. */
+.palette-heading {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: var(--text-h1);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+.palette-heading em {
+  font-style: normal;
+  background: linear-gradient(96deg, var(--c-accent) 0%, var(--c-gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Swatch row, to read the actual values next to the mock. */
+.swatch {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+}
+
+.swatch span {
+  display: block;
+  height: 3rem;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-line);
+}
+
+/* Cyan into orange passes through khaki, which looks like a mistake rather
+   than a gradient. Voltage keeps its two colours apart instead: the heading
+   is cold, the prices and the order button are hot. */
+[data-palette="voltage"] .palette-heading em {
+  background: linear-gradient(96deg, #22d3ee 0%, #7dd3fc 100%);
+}
+
+/* Warm into violet reads as one light source, so Aurora keeps the sweep. */
+[data-palette="aurora"] .palette-heading em {
+  background: linear-gradient(96deg, #fb923c 0%, #ec4899 52%, #b794fb 100%);
+}
