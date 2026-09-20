@@ -161,6 +161,14 @@ export function Contact({
                 WhatsApp
               </a>
               <a
+                href={site.contact.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent underline-offset-4 transition-colors duration-[var(--dur-base)] hover:underline"
+              >
+                Instagram
+              </a>
+              <a
                 href={`tel:${site.contact.phone}`}
                 className="text-accent underline-offset-4 transition-colors duration-[var(--dur-base)] hover:underline"
               >
