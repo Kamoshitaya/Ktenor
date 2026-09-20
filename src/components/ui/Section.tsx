@@ -49,7 +49,16 @@ export function Section({
             </span>
             {eyebrow}
           </p>
-          <h2 className="mt-5 text-[length:var(--text-h1)]">{title}</h2>
+          <h2 className="mt-5 text-[length:var(--text-h1)]">
+            {title.endsWith(".") ? (
+              <>
+                {title.slice(0, -1)}
+                <span className="heading-stop">.</span>
+              </>
+            ) : (
+              title
+            )}
+          </h2>
           {intro ? (
             <p className="mt-6 text-[length:var(--text-lead)] text-text-secondary">
               {intro}

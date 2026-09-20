@@ -36,17 +36,24 @@ export function PricingCard({
   return (
     <article className="pricing-card gold-edge surface surface-hover edge-accent relative flex flex-col overflow-hidden rounded-[var(--radius-lg)]">
       <div className="p-7 sm:p-9">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3">
           <h3 className="text-[length:var(--text-h3)]">{service.name}</h3>
-          <p className="font-display text-[length:var(--text-h3)] tabular">
+          {/* The figure is what the visitor scrolled here for, so it is the
+              biggest thing in the card and the only one wearing the amber
+              gradient. "from" stays small beside it rather than above it. */}
+          <p className="font-display tabular leading-none">
             {service.priceFrom == null ? (
-              <span className="text-text-secondary">{onRequestLabel}</span>
+              <span className="text-[length:var(--text-h3)] text-text-secondary">
+                {onRequestLabel}
+              </span>
             ) : (
               <>
                 <span className="text-caption font-body font-normal text-text-muted">
                   {fromLabel}{" "}
                 </span>
-                <span className="text-gold">€{service.priceFrom}</span>
+                <span className="price-figure text-[length:var(--text-h2)] font-medium">
+                  €{service.priceFrom}
+                </span>
               </>
             )}
           </p>
@@ -56,7 +63,7 @@ export function PricingCard({
 
         {service.timeline ? (
           <p className="mt-6 flex items-center gap-2 text-caption text-text-muted">
-            <span aria-hidden className="size-1.5 rounded-full bg-accent" />
+            <span aria-hidden className="size-1.5 rounded-full bg-teal" />
             {timelineLabel}: <span className="tabular">{service.timeline}</span>
           </p>
         ) : null}
@@ -67,7 +74,7 @@ export function PricingCard({
             aria-expanded={expanded}
             aria-controls={panelId}
             onClick={() => setExpanded((v) => !v)}
-            className="mt-5 flex cursor-pointer items-center gap-1.5 text-sm font-medium text-accent"
+            className="mt-5 flex cursor-pointer items-center gap-1.5 text-sm font-medium text-accent transition-colors duration-[var(--dur-base)] hover:text-accent-strong"
           >
             {whatsIncludedLabel}
             <svg
@@ -99,7 +106,7 @@ export function PricingCard({
               <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
                 {service.included!.map((item) => (
                   <li key={item.id} className="flex gap-2.5 text-sm text-text-secondary">
-                    <span aria-hidden className="mt-2 h-3 w-[3px] shrink-0 rounded-full bg-accent" />
+                    <span aria-hidden className="mt-2 h-3 w-[3px] shrink-0 rounded-full bg-teal" />
                     {item.label}
                   </li>
                 ))}

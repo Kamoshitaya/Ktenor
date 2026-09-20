@@ -1,6 +1,8 @@
 "use client";
 
 import { Logo, Wordmark } from "@/components/brand/Logo";
+import { PricingCard } from "@/components/sections/PricingCard";
+import type { ServicePackage } from "@/lib/cms";
 
 /**
  * Internal reference page for reviewing the foundation in both themes.
@@ -21,6 +23,36 @@ const swatches = [
 ];
 
 const scale = ["--text-display", "--text-h1", "--text-h2", "--text-h3"];
+
+/* Shaped like the CMS rows the live section renders. The real cards need a
+   database, which a local checkout does not have, and these are the one
+   component worth being able to look at without one. */
+const sampleServices = [
+  {
+    id: "sample-1",
+    name: "Landing page",
+    priceFrom: 690,
+    description: "Jedna stránka, ktorá predáva: štruktúra, texty, dizajn a kód od začiatku do konca.",
+    timeline: "2–3 týždne",
+    included: [
+      { id: "a", label: "Návrh a dizajn" },
+      { id: "b", label: "Responzívny kód" },
+      { id: "c", label: "SEO základ" },
+      { id: "d", label: "Formulár a analytika" },
+    ],
+  },
+  {
+    id: "sample-2",
+    name: "E-shop",
+    priceFrom: null,
+    description: "Predaj naživo: katalóg, košík, platby a napojenie na sklad podľa toho, čo predávate.",
+    timeline: "od 8 týždňov",
+    included: [
+      { id: "a", label: "Katalóg a filtre" },
+      { id: "b", label: "Platobná brána" },
+    ],
+  },
+] as unknown as ServicePackage[];
 
 export default function DesignPage() {
   return (
@@ -102,6 +134,23 @@ export default function DesignPage() {
           <p className="text-sm text-text-muted">
             Muted — the lowest contrast allowed anywhere on the site.
           </p>
+        </div>
+      </section>
+
+      <section className="mt-[var(--spacing-block)] border-t border-line pt-[var(--spacing-block)]">
+        <h2 className="mb-8 text-h3">Pricing card</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          {sampleServices.map((service) => (
+            <PricingCard
+              key={service.id}
+              service={service}
+              fromLabel="od"
+              onRequestLabel="Na vyžiadanie"
+              timelineLabel="Termín"
+              whatsIncludedLabel="Čo je v cene"
+              orderLabel="Objednať"
+            />
+          ))}
         </div>
       </section>
 

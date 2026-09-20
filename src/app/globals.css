@@ -345,9 +345,25 @@
   h4 {
     font-family: var(--font-display), "Segoe UI", system-ui, sans-serif;
     font-weight: 500;
-    line-height: 1.08;
-    letter-spacing: -0.02em;
+    line-height: 1.06;
+    letter-spacing: -0.025em;
     text-wrap: balance;
+  }
+
+  /* Only 400 and 500 of Clash ship, so weight cannot carry the hierarchy —
+     size, tracking and colour have to. The largest setting gets the tightest
+     tracking, which is where loose spacing shows most. */
+  h1 {
+    letter-spacing: -0.035em;
+  }
+
+  /**
+   * The full stop that ends every section heading, in that section's hue.
+   * One character, and it is what makes eight headings look like eight
+   * sections rather than one list.
+   */
+  .heading-stop {
+    color: var(--tone, var(--c-accent));
   }
 
   p {
@@ -675,6 +691,41 @@
   .gold-edge:hover::after,
   .gold-edge:focus-within::after {
     opacity: 0.95;
+  }
+
+  /**
+   * The price itself. Amber into ember across the digits — the one place on
+   * the site allowed a gradient on type, because it is the one number the
+   * whole card exists to deliver.
+   */
+  .price-figure {
+    background: linear-gradient(120deg, var(--c-gold) 0%, var(--c-accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /**
+   * A hot line of light along the top edge of a pricing card, brightest in
+   * the middle. Invisible until hover, when it arrives with the lift — the
+   * card reads as catching the page's light rather than as changing colour.
+   */
+  .pricing-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 12%;
+    right: 12%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--c-gold), var(--c-accent), transparent);
+    opacity: 0;
+    transition: opacity var(--dur-slow) var(--ease-standard);
+    pointer-events: none;
+  }
+
+  .pricing-card:hover::before,
+  .pricing-card:focus-within::before {
+    opacity: 1;
   }
 
   /**
