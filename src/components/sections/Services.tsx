@@ -18,7 +18,7 @@ export function Services({
   return (
     <Section
       id="services"
-      tone="warm"
+      tone="amber"
       eyebrow={t.services.eyebrow}
       title={t.services.title}
       intro={t.services.intro}

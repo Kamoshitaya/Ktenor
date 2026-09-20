@@ -105,7 +105,7 @@ export function Hero({ t }: Props) {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(90deg, rgb(11 12 17 / 0.15) 0%, rgb(11 12 17 / 0.55) 45%, rgb(11 12 17 / 0.88) 78%)",
+              "linear-gradient(90deg, rgb(11 10 12 / 0.1) 0%, rgb(11 10 12 / 0.5) 45%, rgb(11 10 12 / 0.9) 78%)",
           }}
         />
         <div
@@ -146,7 +146,7 @@ export function Hero({ t }: Props) {
     <div
       aria-hidden
       className="-mt-px h-28"
-      style={{ background: "linear-gradient(to bottom, #08090d, transparent)" }}
+      style={{ background: "linear-gradient(to bottom, #0b0a0c, transparent)" }}
     />
     </>
   );

@@ -14,6 +14,12 @@ import ffmpeg from "ffmpeg-static";
  * VP9 is the primary codec (Chrome, Firefox, Edge, Safari 14+) with an H.264
  * fallback for anything older. Two widths: 1920 for large displays, 1280 for
  * laptops. Nothing below 768px ever loads a video at all.
+ *
+ * The render also gets graded here. It was produced cold and blue, which
+ * fought the ember palette the site moved to — the first screen read as a
+ * different brand from everything under it. Grading the source once costs
+ * nothing at runtime; a CSS filter on a full-screen video costs a pass on
+ * every frame, which is the one place on this page that cannot afford it.
  */
 
 // Sources live outside public/ so the 5 MB original is never deployed.
@@ -31,8 +37,15 @@ const kb = (file) => Math.round(statSync(file).size / 1024);
 
 const widths = [1920, 1280];
 
+/**
+ * Cold blue to ember. The hue rotation lands the render's dominant blues in
+ * orange, saturation makes up for what the rotation flattens, and the slight
+ * lift keeps the darkest thirds from closing up once they are warm.
+ */
+const GRADE = "hue=h=190:s=1.4,eq=brightness=0.012:contrast=1.04";
+
 for (const width of widths) {
-  const scale = `scale=${width}:-2:flags=lanczos`;
+  const scale = `${GRADE},scale=${width}:-2:flags=lanczos`;
 
   // VP9. crf 40 is high, but on smooth dark gradients the artefacts land
   // below the noise floor of the render itself.
@@ -80,7 +93,7 @@ const poster = join(root, "media-src/hero-poster.png");
 const posterWebp = join(out, "hero-poster.webp");
 run([
   "-i", poster,
-  "-vf", "scale=1600:-2:flags=lanczos",
+  "-vf", `${GRADE},scale=1600:-2:flags=lanczos`,
   "-c:v", "libwebp",
   "-quality", "78",
   "-compression_level", "6",

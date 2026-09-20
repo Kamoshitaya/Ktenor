@@ -127,7 +127,7 @@ export function Contact({
       id="contact"
       className="relative isolate scroll-mt-[72px] py-[var(--spacing-section)]"
     >
-      <div aria-hidden className="section-wash" data-tone="cool" />
+      <div aria-hidden className="section-wash" data-tone="steel" />
       <div className="container-page grid gap-[var(--spacing-block)] lg:grid-cols-[0.9fr_1.1fr]">
         <div>
           <p className="flex items-center gap-3 text-caption uppercase tracking-[0.24em] text-text-muted">

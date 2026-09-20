@@ -18,7 +18,12 @@ export async function Testimonials({ t, locale }: { t: Dictionary; locale: Local
   const reviews = await listApprovedReviews(TEASER_COUNT).catch(() => []);
 
   return (
-    <Section eyebrow={t.testimonials.eyebrow} title={t.testimonials.title} intro={t.testimonials.intro}>
+    <Section
+      tone="amber"
+      eyebrow={t.testimonials.eyebrow}
+      title={t.testimonials.title}
+      intro={t.testimonials.intro}
+    >
       {reviews.length > 0 ? (
         <>
           <ul data-reveal-group className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">

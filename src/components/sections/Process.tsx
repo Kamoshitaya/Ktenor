@@ -52,6 +52,7 @@ const STEP_ICON: Record<ProcessId, React.ReactNode> = {
 export function Process({ t }: { t: Dictionary }) {
   return (
     <Section
+      tone="teal"
       id="process"
       eyebrow={t.process.eyebrow}
       title={t.process.title}

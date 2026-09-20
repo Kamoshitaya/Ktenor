@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/Section";
 export function Advantages({ t }: { t: Dictionary }) {
   return (
     <Section
+      tone="ember"
       eyebrow={t.advantages.eyebrow}
       title={t.advantages.title}
       intro={t.advantages.intro}

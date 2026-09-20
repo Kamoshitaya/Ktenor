@@ -6,7 +6,7 @@ export function Principles({ t }: { t: Dictionary }) {
   return (
     <Section
       id="about"
-      tone="warm"
+      tone="steel"
       eyebrow={t.principles.eyebrow}
       title={t.principles.title}
       intro={t.principles.intro}

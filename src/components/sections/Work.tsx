@@ -24,7 +24,13 @@ const THUMBS: Partial<Record<ProjectId, string>> = {
  */
 export function Work({ t }: { t: Dictionary }) {
   return (
-    <Section id="work" eyebrow={t.work.eyebrow} title={t.work.title} intro={t.work.intro}>
+    <Section
+      id="work"
+      tone="ember"
+      eyebrow={t.work.eyebrow}
+      title={t.work.title}
+      intro={t.work.intro}
+    >
       <div data-reveal-group className="grid gap-6 md:grid-cols-2">
         {builtProjectIds.map((id) => {
           const project = t.work.projects[id];

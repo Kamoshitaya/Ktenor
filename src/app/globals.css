@@ -16,71 +16,87 @@
 [data-theme="dark"] {
   color-scheme: dark;
 
-  /* --- Surfaces -------------------------------------------------------- */
-  /* Not pure #000: on OLED it smears during scroll. The page itself is
-     painted by .bg-field, a fixed layer — this is only the fallback beneath. */
-  --c-bg: #08090d;
-  --c-bg-raised: #0d0f14;
-  --c-bg-overlay: #12151c;
+  /* --- Surfaces --------------------------------------------------------
+     Warm graphite, not neutral black. The base carries a few points of red
+     so the oranges above it look lit rather than pasted on, and so the page
+     stops reading as the cold void it was. */
+  --c-bg: #0b0a0c;
+  --c-bg-raised: #14120f;
+  --c-bg-overlay: #1c1813;
 
   /* --- Text ------------------------------------------------------------ */
-  --c-text: #eeeff4; /* 17.2:1 on --c-bg */
-  --c-text-secondary: #a2a8b6; /*  8.2:1 */
-  --c-text-muted: #767e8f; /*  4.8:1 — floor for body-size text */
+  --c-text: #f4f0ea; /* 16.8:1 on --c-bg */
+  --c-text-secondary: #aea79c; /*  7.4:1 */
+  --c-text-muted: #857e73; /*  4.6:1 — floor for body-size text */
 
-  /* --- Accent: steel blue, derived from the logo, muted for premium ---- */
-  --c-accent: #6e8fc4; /*  5.9:1 on --c-bg */
-  --c-accent-strong: #8aa7d6;
-  /* Middle step of the logo's three-bar ramp. */
-  --c-accent-mid: #46618f;
-  --c-accent-deep: #2a3a55;
-  --c-accent-contrast: #0b0c11; /* text on a filled accent surface */
+  /* --- Accent: ember orange. The one colour that points at things. ------ */
+  --c-accent: #ff6b2c; /*  6.9:1 on --c-bg */
+  --c-accent-strong: #ff8a52;
+  --c-accent-mid: #c4451a;
+  --c-accent-deep: #5a2210;
+  --c-accent-contrast: #140c06; /* text on a filled accent surface */
 
-  /* --- Second accent: warm gold, reserved for price figures and primary
-     emphasis only — the blue stays calm, this is what does the pointing. */
-  --c-gold: #c9974f; /*  6.1:1 on --c-bg */
-  --c-gold-deep: #9c7238;
-  --c-gold-contrast: #1c1408; /* text on a filled gold surface */
+  /* --- Money: amber. Prices, totals, the order button. ------------------ */
+  --c-gold: #ffb347; /* 10.9:1 */
+  --c-gold-deep: #d98f2b;
+  --c-gold-contrast: #1a1206;
+
+  /*
+   * --- The rest of the palette -----------------------------------------
+   * Ember on its own is one hue and goes monotonous over twelve screens.
+   * These widen it without leaving the fire: teal is orange's actual
+   * complement and the only cold note strong enough to hold its own beside
+   * it, steel keeps the logo's blue in the family, and flare is the hotter
+   * end of the same coal. Each owns a job and appears nowhere else.
+   */
+  --c-teal: #2dd4bf; /* 10.5:1 — what is included, confirmed, done */
+  --c-teal-deep: #14907f;
+  --c-flare: #f4543f; /*  5.8:1 — the hot end: gradients, live details */
+  --c-flare-deep: #b82f1e;
+  --c-steel: #7fa0d8; /*  7.3:1 — the logo's own blue, kept for detail */
+  --c-steel-deep: #40598c;
 
   /* --- Lines & silver -------------------------------------------------- */
-  --c-silver: #c9ceda;
+  --c-silver: #cfc8bd;
   /* Muted enough not to shout on a premium surface, still 9:1 on the base. */
   --c-danger: #e0a0a0;
   --c-danger-border: #d98a8a;
   --c-danger-bg: rgb(224 160 160 / 0.07);
-  --c-line: rgb(238 239 244 / 0.09);
-  --c-line-strong: rgb(238 239 244 / 0.16);
+  --c-line: rgb(244 240 234 / 0.09);
+  --c-line-strong: rgb(244 240 234 / 0.17);
 
   /* --- Liquid glass ----------------------------------------------------
      Reserved for elements that genuinely float over moving content: the
      header, and overlays. Cards use --surface-* instead, which costs the
      compositor nothing. */
-  --glass-bg: rgb(238 239 244 / 0.05);
-  --glass-bg-hover: rgb(238 239 244 / 0.09);
-  --glass-border: rgb(238 239 244 / 0.12);
+  --glass-bg: rgb(244 240 234 / 0.05);
+  --glass-bg-hover: rgb(244 240 234 / 0.09);
+  --glass-border: rgb(244 240 234 / 0.12);
   --glass-blur: 14px;
   --glass-saturate: 130%;
-  --glass-shadow: inset 0 1px 0 rgb(238 239 244 / 0.06);
+  --glass-shadow: inset 0 1px 0 rgb(255 200 170 / 0.07);
 
-  /* --- Card surfaces — no backdrop-filter, no large shadows ------------- */
-  --surface-bg: rgb(238 239 244 / 0.035);
-  --surface-bg-hover: rgb(238 239 244 / 0.07);
-  --surface-border: rgb(238 239 244 / 0.09);
-  --surface-border-hover: rgb(238 239 244 / 0.16);
-  --surface-shadow: inset 0 1px 0 rgb(238 239 244 / 0.05);
-  --surface-shadow-hover: inset 0 1px 0 rgb(238 239 244 / 0.09);
-  /* Ambient, accent-tinted — the lift a hovered card gets reads as light
-     from the page's own palette, not a generic drop shadow. */
-  --surface-glow-hover: 0 18px 44px -16px rgb(110 143 196 / 0.38);
+  /* --- Card surfaces — no backdrop-filter, no large shadows -------------
+     The fill is tinted with the accent rather than plain white at low
+     alpha: on a warm ground a neutral wash reads as grey dust. */
+  --surface-bg: rgb(255 140 80 / 0.045);
+  --surface-bg-hover: rgb(255 140 80 / 0.085);
+  --surface-border: rgb(244 240 234 / 0.09);
+  --surface-border-hover: rgb(255 107 44 / 0.42);
+  --surface-shadow: inset 0 1px 0 rgb(255 200 170 / 0.07);
+  --surface-shadow-hover: inset 0 1px 0 rgb(255 200 170 / 0.14);
+  /* Ambient and hot — the lift a hovered card gets reads as the page's own
+     light, not a generic drop shadow. */
+  --surface-glow-hover: 0 22px 52px -18px rgb(255 107 44 / 0.42);
 
-  /* Primary action. Steel from the logo, lit from above. */
-  --btn-top: #85a2d2;
-  --btn-bottom: #5b7fb8;
-  --btn-top-hover: #96b1dc;
-  --btn-bottom-hover: #6c8ec6;
-  --btn-highlight: rgb(255 255 255 / 0.24);
+  /* Primary action: ember, lit from above. */
+  --btn-top: #ff8442;
+  --btn-bottom: #e8511b;
+  --btn-top-hover: #ff9559;
+  --btn-bottom-hover: #f5622c;
+  --btn-highlight: rgb(255 255 255 / 0.26);
 
-  --scrim: rgb(8 9 13 / 0.74);
+  --scrim: rgb(11 10 12 / 0.76);
 }
 
 /**
@@ -93,85 +109,111 @@
  * warm amber that appears in the hero render — the same palette, not a new one.
  */
 :root {
-  /* Ambient wash carried by individual sections. The fixed field only ever
-     covers one viewport, so on a twelve-screen page every screen after the
-     first looked identical — that, not the palette, is what read as flat.
-     These scroll with the content, so they are painted once and never again. */
-  --wash-cool: rgb(110 143 196 / 0.07);
-  --wash-warm: rgb(150 112 74 / 0.055);
+  /*
+   * Ambient wash carried by individual sections. The fixed field only ever
+   * covers one viewport, so on a twelve-screen page every screen after the
+   * first looked identical — that, not the palette, is what read as flat.
+   * These scroll with the content, so they are painted once and never again.
+   * There are now four of them and sections take turns, which is where the
+   * page gets its colour from without any one section shouting.
+   */
+  --wash-ember: rgb(255 107 44 / 0.085);
+  --wash-amber: rgb(255 179 71 / 0.07);
+  --wash-teal: rgb(45 212 191 / 0.065);
+  --wash-steel: rgb(127 160 216 / 0.07);
+  /* Kept under the old names so nothing that still asks for them breaks. */
+  --wash-cool: var(--wash-teal);
+  --wash-warm: var(--wash-ember);
 
-  --field-dark: radial-gradient(120% 85% at 50% 45%, transparent 52%, rgb(0 0 0 / 0.38)),
-    radial-gradient(58% 46% at 12% -4%, rgb(110 143 196 / 0.15), transparent 70%),
-    radial-gradient(48% 42% at 88% 18%, rgb(42 58 85 / 0.42), transparent 74%),
-    radial-gradient(72% 55% at 52% 104%, rgb(150 112 74 / 0.06), transparent 70%),
-    linear-gradient(178deg, #08090d 0%, #0a0c11 46%, #08090d 100%);
+  /*
+   * Dark: a coal seen from above. Ember at the top left, a colder teal
+   * opposite so the warmth has something to be warm against, amber pooling
+   * at the bottom, and a vignette holding it all in.
+   */
+  --field-dark: radial-gradient(118% 84% at 50% 45%, transparent 50%, rgb(0 0 0 / 0.42)),
+    radial-gradient(60% 46% at 6% -6%, rgb(255 107 44 / 0.2), transparent 70%),
+    radial-gradient(46% 40% at 94% 8%, rgb(45 212 191 / 0.1), transparent 74%),
+    radial-gradient(52% 44% at 88% 46%, rgb(127 160 216 / 0.08), transparent 74%),
+    radial-gradient(78% 56% at 48% 106%, rgb(255 179 71 / 0.1), transparent 72%),
+    linear-gradient(178deg, #0b0a0c 0%, #120f0d 46%, #0b0a0c 100%);
 
-  /* Light: the same two notes at the same positions — cool steel, warm stone —
-     lifted into off-white. Cream, not yellow; stone, not vintage. */
-  --field-light: radial-gradient(120% 85% at 50% 45%, transparent 58%, rgb(22 23 27 / 0.055)),
-    radial-gradient(56% 44% at 10% -4%, rgb(53 84 127 / 0.1), transparent 70%),
-    radial-gradient(46% 40% at 90% 16%, rgb(190 172 148 / 0.2), transparent 74%),
-    radial-gradient(70% 54% at 50% 104%, rgb(120 130 150 / 0.09), transparent 70%),
-    linear-gradient(178deg, #f7f6f4 0%, #f1f0ed 48%, #f6f5f3 100%);
+  /* Light: the same four notes at the same positions, lifted into cream. */
+  --field-light: radial-gradient(118% 84% at 50% 45%, transparent 56%, rgb(26 22 19 / 0.06)),
+    radial-gradient(58% 44% at 8% -6%, rgb(255 107 44 / 0.13), transparent 70%),
+    radial-gradient(46% 40% at 92% 8%, rgb(45 212 191 / 0.1), transparent 74%),
+    radial-gradient(50% 42% at 88% 46%, rgb(127 160 216 / 0.09), transparent 74%),
+    radial-gradient(74% 54% at 48% 106%, rgb(255 179 71 / 0.14), transparent 72%),
+    linear-gradient(178deg, #faf7f3 0%, #f5f0e9 48%, #faf7f3 100%);
 }
 
 [data-theme="light"] {
   color-scheme: light;
 
-  --wash-cool: rgb(53 84 127 / 0.06);
-  --wash-warm: rgb(186 166 138 / 0.15);
+  --wash-warm: rgb(255 107 44 / 0.07);
+  --wash-cool: rgb(45 212 191 / 0.07);
 
-  /* Warm off-white, never pure #fff. Cream rather than grey, but pulled back
-     from anything yellow or vintage. */
-  --c-bg: #f6f5f3;
-  --c-bg-raised: #fbfaf9;
+  /* Warm off-white, never pure #fff, and warmer than before so the ember
+     accents sit on a ground that shares their temperature. */
+  --c-bg: #faf7f3;
+  --c-bg-raised: #fffdfa;
   --c-bg-overlay: #ffffff;
 
-  --c-text: #16171b; /* 16.2:1 on --c-bg */
-  --c-text-secondary: #4b4f58; /*  7.3:1 */
-  /* Darkened to buy headroom: the warm section wash lifts the background
-     under this text, and at the old value it slipped below AA there. */
-  --c-text-muted: #5f636c; /*  5.6:1 on the base, 5.0:1 over the warm wash */
+  --c-text: #1a1613; /* 16.4:1 on --c-bg */
+  --c-text-secondary: #504a43; /*  7.5:1 */
+  /* Dark enough to survive the warm section wash lifting the ground under it. */
+  --c-text-muted: #645d54; /*  5.4:1 on the base, 5.0:1 over the wash */
 
-  --c-accent: #35547f; /*  7.1:1 — blue needs to go dark on light */
-  --c-accent-strong: #24405f;
-  --c-accent-mid: #2a4467;
-  --c-accent-deep: #22344e;
-  --c-accent-contrast: #ffffff;
+  /*
+   * Every accent darkens on light. The dark theme's #ff6b2c is 2.6:1 here —
+   * fine as a fill, illegible as text — so the tokens carry the readable
+   * version and the bright hue returns only in gradients and glows below.
+   */
+  --c-accent: #c2410c; /*  4.8:1 */
+  --c-accent-strong: #9a3412;
+  --c-accent-mid: #b03a0b;
+  --c-accent-deep: #7c2d12;
+  --c-accent-contrast: #fffaf5;
 
-  --c-gold: #9c7238; /*  5.2:1 — darkened to hold contrast on the light field */
-  --c-gold-deep: #7a5a2c;
-  --c-gold-contrast: #fdf8f0;
+  --c-gold: #b45309; /*  4.7:1 */
+  --c-gold-deep: #92400e;
+  --c-gold-contrast: #fffaf0;
 
-  --c-silver: #6b7280;
+  --c-teal: #0f766e; /*  5.2:1 */
+  --c-teal-deep: #115e59;
+  --c-flare: #be2b1a; /*  5.5:1 */
+  --c-flare-deep: #991b1b;
+  --c-steel: #35547f; /*  7.0:1 */
+  --c-steel-deep: #22344e;
+
+  --c-silver: #6f675e;
   --c-danger: #9b2c2c;
   --c-danger-border: #b04545;
   --c-danger-bg: rgb(155 44 44 / 0.05);
-  --c-line: rgb(20 22 28 / 0.1);
-  --c-line-strong: rgb(20 22 28 / 0.18);
+  --c-line: rgb(26 22 19 / 0.1);
+  --c-line-strong: rgb(26 22 19 / 0.18);
 
   --glass-bg: rgb(255 255 255 / 0.7);
   --glass-bg-hover: rgb(255 255 255 / 0.85);
-  --glass-border: rgb(22 23 27 / 0.08);
-  --glass-shadow: 0 1px 2px rgb(22 23 27 / 0.05);
+  --glass-border: rgb(26 22 19 / 0.08);
+  --glass-shadow: 0 1px 2px rgb(26 22 19 / 0.05);
 
   /* Translucent, so cards pick up the tint of the field behind them. That is
      where the depth comes from — not from a shadow under every card. */
-  --surface-bg: rgb(255 255 255 / 0.62);
-  --surface-bg-hover: rgb(255 255 255 / 0.86);
-  --surface-border: rgb(22 23 27 / 0.07);
-  --surface-border-hover: rgb(22 23 27 / 0.13);
-  --surface-shadow: 0 1px 2px rgb(22 23 27 / 0.04);
-  --surface-shadow-hover: 0 6px 20px rgb(22 23 27 / 0.07);
-  --surface-glow-hover: 0 16px 36px -18px rgb(53 84 127 / 0.22);
+  --surface-bg: rgb(255 255 255 / 0.64);
+  --surface-bg-hover: rgb(255 255 255 / 0.88);
+  --surface-border: rgb(26 22 19 / 0.07);
+  --surface-border-hover: rgb(194 65 12 / 0.34);
+  --surface-shadow: 0 1px 2px rgb(26 22 19 / 0.04);
+  --surface-shadow-hover: 0 6px 20px rgb(26 22 19 / 0.07);
+  --surface-glow-hover: 0 18px 38px -18px rgb(255 107 44 / 0.32);
 
-  --btn-top: #3f628f;
-  --btn-bottom: #2b4771;
-  --btn-top-hover: #4a6f9e;
-  --btn-bottom-hover: #34537f;
-  --btn-highlight: rgb(255 255 255 / 0.18);
+  --btn-top: #e8551d;
+  --btn-bottom: #c2410c;
+  --btn-top-hover: #f26a33;
+  --btn-bottom-hover: #d2490e;
+  --btn-highlight: rgb(255 255 255 / 0.22);
 
-  --scrim: rgb(22 23 27 / 0.42);
+  --scrim: rgb(26 22 19 / 0.44);
 }
 
 /* Weak GPU: translucent fill + hairline, zero blur.
@@ -207,6 +249,13 @@
   --color-gold: var(--c-gold);
   --color-gold-deep: var(--c-gold-deep);
   --color-gold-contrast: var(--c-gold-contrast);
+
+  --color-teal: var(--c-teal);
+  --color-teal-deep: var(--c-teal-deep);
+  --color-flare: var(--c-flare);
+  --color-flare-deep: var(--c-flare-deep);
+  --color-steel: var(--c-steel);
+  --color-steel-deep: var(--c-steel-deep);
 
   --color-silver: var(--c-silver);
   --color-danger: var(--c-danger);
@@ -504,12 +553,62 @@
     transition: background var(--dur-slow) var(--ease-standard);
   }
 
-  .section-wash[data-tone="cool"] {
-    background: radial-gradient(46% 58% at 8% 34%, var(--wash-cool), transparent 68%);
+  /*
+   * A section declares its tone once and everything inside reads it: the
+   * ambient wash, the eyebrow mark, any tinted detail. That is what keeps
+   * four hues on one page from turning into confetti — the colour belongs
+   * to the section, not to whoever styled the component.
+   */
+  section[data-tone="ember"] {
+    --tone: var(--c-accent);
+    --tone-mid: var(--c-accent-mid);
+    --tone-deep: var(--c-accent-deep);
   }
 
+  section[data-tone="teal"] {
+    --tone: var(--c-teal);
+    --tone-mid: var(--c-teal-deep);
+    --tone-deep: color-mix(in oklab, var(--c-teal-deep) 55%, transparent);
+  }
+
+  section[data-tone="amber"] {
+    --tone: var(--c-gold);
+    --tone-mid: var(--c-gold-deep);
+    --tone-deep: color-mix(in oklab, var(--c-gold-deep) 55%, transparent);
+  }
+
+  section[data-tone="steel"] {
+    --tone: var(--c-steel);
+    --tone-mid: var(--c-steel-deep);
+    --tone-deep: color-mix(in oklab, var(--c-steel-deep) 55%, transparent);
+  }
+
+  /* Four tones, alternating sides. A section knows only which tone it is;
+     the rotation lives in the page, so re-ordering sections cannot leave two
+     of the same colour touching. */
+  .section-wash[data-tone="ember"] {
+    background: radial-gradient(48% 60% at 6% 32%, var(--wash-ember), transparent 68%);
+  }
+
+  .section-wash[data-tone="teal"] {
+    background: radial-gradient(48% 60% at 94% 40%, var(--wash-teal), transparent 68%);
+  }
+
+  .section-wash[data-tone="amber"] {
+    background: radial-gradient(52% 58% at 12% 68%, var(--wash-amber), transparent 70%);
+  }
+
+  .section-wash[data-tone="steel"] {
+    background: radial-gradient(48% 60% at 88% 26%, var(--wash-steel), transparent 68%);
+  }
+
+  /* The names the sections used before the palette widened. */
   .section-wash[data-tone="warm"] {
-    background: radial-gradient(46% 58% at 92% 42%, var(--wash-warm), transparent 68%);
+    background: radial-gradient(48% 60% at 92% 42%, var(--wash-ember), transparent 68%);
+  }
+
+  .section-wash[data-tone="cool"] {
+    background: radial-gradient(48% 60% at 8% 34%, var(--wash-teal), transparent 68%);
   }
 
   /**
@@ -541,7 +640,7 @@
     bottom: 24%;
     width: 2px;
     border-radius: 999px;
-    background: linear-gradient(180deg, var(--c-accent), var(--c-accent-deep));
+    background: linear-gradient(180deg, var(--c-gold), var(--c-accent) 55%, var(--c-flare-deep));
     transform: scaleY(0);
     transition: transform var(--dur-slower) var(--ease-out-expo);
   }
@@ -564,18 +663,18 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, var(--c-gold) 0%, transparent 38%, transparent 62%, var(--c-accent) 100%);
+    background: linear-gradient(135deg, var(--c-gold) 0%, var(--c-flare) 22%, transparent 44%, transparent 58%, var(--c-teal) 100%);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-    opacity: 0.32;
+    opacity: 0.42;
     pointer-events: none;
     transition: opacity var(--dur-slow) var(--ease-standard);
   }
 
   .gold-edge:hover::after,
   .gold-edge:focus-within::after {
-    opacity: 0.7;
+    opacity: 0.95;
   }
 
   /**
@@ -585,8 +684,8 @@
    * emphasis). Every other button on the site is untouched.
    */
   .order-btn {
-    background: linear-gradient(135deg, var(--c-gold), var(--c-gold-deep));
-    box-shadow: 0 10px 24px -10px rgb(201 151 79 / 0.55);
+    background: linear-gradient(135deg, var(--c-gold) 0%, var(--c-accent) 100%);
+    box-shadow: 0 12px 28px -10px rgb(255 140 60 / 0.6);
   }
 
   /**

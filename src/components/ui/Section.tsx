@@ -5,8 +5,12 @@ type Props = {
   intro?: string;
   children: React.ReactNode;
   className?: string;
-  /** Alternates down the page so the ambient tone shifts as you read. */
-  tone?: "cool" | "warm";
+  /**
+   * Which of the palette's four hues this section runs on. Rotated by the
+   * page so no two touching sections share one, which is where a long dark
+   * page gets its variety from.
+   */
+  tone?: "ember" | "teal" | "amber" | "steel";
 };
 
 /**
@@ -21,21 +25,27 @@ export function Section({
   intro,
   children,
   className,
-  tone = "cool",
+  tone = "ember",
 }: Props) {
   return (
     <section
       id={id}
+      data-tone={tone}
       className={`section-seam relative isolate scroll-mt-[72px] py-[var(--spacing-section)] ${className ?? ""}`}
     >
       <div aria-hidden className="section-wash" data-tone={tone} />
       <div className="container-page">
         <header data-reveal className="max-w-[62ch]">
-          <p className="flex items-center gap-3 text-caption uppercase tracking-[0.24em] text-text-muted">
+          {/* The mark is the logo's three bars, tinted to the section's own
+              hue — the cheapest way to tell twelve screens apart at a glance. */}
+          <p
+            className="flex items-center gap-3 text-caption font-medium uppercase tracking-[0.24em]"
+            style={{ color: "var(--tone)" }}
+          >
             <span aria-hidden className="flex gap-[3px]">
-              <span className="h-3 w-[3px] rounded-full bg-accent" />
-              <span className="h-3 w-[3px] rounded-full bg-accent-mid" />
-              <span className="h-3 w-[3px] rounded-full bg-accent-deep" />
+              <span className="h-3 w-[3px] rounded-full" style={{ background: "var(--tone)" }} />
+              <span className="h-3 w-[3px] rounded-full" style={{ background: "var(--tone-mid)" }} />
+              <span className="h-3 w-[3px] rounded-full" style={{ background: "var(--tone-deep)" }} />
             </span>
             {eyebrow}
           </p>
