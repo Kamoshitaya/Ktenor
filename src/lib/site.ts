@@ -48,6 +48,39 @@ export const site = {
   /** Meta/footer only — never in the hero headline. */
   region: { city: "Bratislava", country: "Slovakia" },
 
+  /**
+   * The business legally behind the site: the registered živnosť, not the
+   * brand. Slovak law (§ 4 of Act 22/2004 on e-commerce) wants these on any
+   * site offering services, and the privacy policy's controller and the
+   * terms' provider are both this person.
+   *
+   * Empty until the trade licence is issued. Nothing here is ever rendered as
+   * a placeholder: while `name` or `ico` is blank the footer block and the
+   * terms page simply do not exist, because a half-filled legal identity is
+   * worse than none. Fill all four fields from the osvedčenie and they appear.
+   */
+  operator: {
+    /** Obchodné meno exactly as registered, e.g. "Meno Priezvisko – Ktenor". */
+    name: "" as string,
+    /** Miesto podnikania, as on the osvedčenie. */
+    address: "" as string,
+    ico: "" as string,
+    /** e.g. "Živnostenský register Okresného úradu Bratislava, č. 110-000000". */
+    register: "" as string,
+    /** Not below the registration threshold any more? Flip, and add the IČ DPH. */
+    vatPayer: false as boolean,
+    vatId: "" as string,
+  },
+
+  /**
+   * Services are sold to businesses and organisations only. That is a legal
+   * choice as much as a commercial one: consumer-protection duties — the
+   * 14-day withdrawal right on distance contracts, ADR, a consumer complaints
+   * procedure — do not apply between two businesses, so the terms stay short
+   * and the contact form asks the enquirer to confirm it.
+   */
+  b2bOnly: true,
+
   features: {
     /** Flip to true once the first real client testimonial exists. */
     testimonials: false,
@@ -60,3 +93,6 @@ export const site = {
 } as const;
 
 export type Site = typeof site;
+
+/** True once the registered identity is filled in and may be published. */
+export const hasOperator = Boolean(site.operator.name.trim() && site.operator.ico.trim());

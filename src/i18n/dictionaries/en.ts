@@ -90,6 +90,8 @@ const en = {
     addonsTitle: "Add-ons",
     addonsIntro: "Priced separately so the figures above stay honest.",
     payment: "50% up front, 50% on completion — before the site goes live.",
+    b2b: "Services are for businesses and organisations.",
+    vatFinal: "Prices are final — the operator is not registered for VAT, so nothing is added on top.",
     disclaimer:
       "Starting prices are indicative. The final price depends on the project scope, functionality and requirements.",
     enquiry: {
@@ -313,6 +315,10 @@ const en = {
       "1500to3000": "€1 500 – 3 000",
       over3000: "€3 000+",
     },
+    business: {
+      label: "I am enquiring on behalf of a business or organisation, not as a consumer",
+      link: "Terms",
+    },
     consent: {
       label: "I agree to the processing of my personal data",
       link: "Privacy Policy",
@@ -334,6 +340,7 @@ const en = {
       email: "That email address does not look right.",
       phone: "That phone number does not look right.",
       service: "Please choose what you need.",
+      business: "I work with businesses and organisations only — please confirm you are one.",
       consent: "Please agree to the processing of your data.",
     },
     direct: "Or reach me directly",
@@ -347,7 +354,12 @@ const en = {
     social: "Social",
     rights: "All rights reserved.",
     privacy: "Privacy Policy",
+    terms: "Terms of Service",
     location: "Bratislava, Slovakia — working remotely across the country",
+    operator: "Operator",
+    ico: "Company ID (IČO)",
+    vatId: "VAT ID",
+    notVatPayer: "Not registered for VAT.",
   },
 
   notFound: {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/i18n/config";
 import { privacy } from "@/content/privacy";
+import { LegalDocument } from "@/components/legal/LegalDocument";
 
 export async function generateMetadata({
   params,
@@ -30,32 +31,5 @@ export default async function PrivacyPage({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
-  const doc = privacy[locale];
-
-  return (
-    <article className="container-page py-[var(--spacing-section)]">
-      <div className="max-w-[68ch]">
-        <h1 className="text-[length:var(--text-h1)]">{doc.title}</h1>
-        <p className="mt-4 text-caption text-text-muted">{doc.updated}</p>
-        <p className="mt-8 text-[length:var(--text-lead)] text-text-secondary">
-          {doc.intro}
-        </p>
-
-        <div className="mt-[var(--spacing-block)] space-y-12">
-          {doc.blocks.map((block) => (
-            <section key={block.heading}>
-              <h2 className="text-[length:var(--text-h3)]">{block.heading}</h2>
-              <div className="mt-4 space-y-4">
-                {block.body.map((paragraph) => (
-                  <p key={paragraph} className="text-text-secondary">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-      </div>
-    </article>
-  );
+  return <LegalDocument doc={privacy[locale]} />;
 }

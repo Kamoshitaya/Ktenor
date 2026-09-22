@@ -94,6 +94,7 @@ export async function POST(request: Request) {
     budget: clean(body.budget, 40),
     timeline: clean(body.timeline, LIMITS.timeline),
     message: clean(body.message, LIMITS.message),
+    business: body.business === true,
     consent: body.consent === true,
     locale: body.locale === "en" ? "en" : "sk",
   };
@@ -151,6 +152,7 @@ type CleanEnquiry = {
   budget: string;
   timeline: string;
   message: string;
+  business: boolean;
   consent: boolean;
   locale: "sk" | "en";
 };
@@ -245,6 +247,10 @@ async function notifyOwner(enquiry: CleanEnquiry) {
       ["Budget", budgetLabel],
       ["Timeline", enquiry.timeline || "—"],
       ["Language", enquiry.locale.toUpperCase()],
+      // Kept in the owner's copy on purpose: this email is the record that the
+      // client said they were ordering as a business, which is what the
+      // B2B-only terms rest on if that is ever questioned.
+      ["Client type", enquiry.business ? "Business / organisation (confirmed)" : "—"],
     ])}</table>
     ${
       message

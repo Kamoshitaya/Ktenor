@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import type { Dictionary } from "@/i18n";
 import type { Locale } from "@/i18n/config";
 import type { ServicePackage } from "@/lib/cms";
-import { site } from "@/lib/site";
+import { hasOperator, site } from "@/lib/site";
 import { dialCodes } from "@/content/dial-codes";
 import { budgetKeys, validateEnquiry, type EnquiryErrorKey } from "@/lib/enquiry";
 import { Button } from "@/components/ui/Button";
@@ -68,6 +68,7 @@ export function Contact({
       budget: get("budget"),
       timeline: get("timeline"),
       message: get("message"),
+      business: data.get("business") === "on",
       consent: data.get("consent") === "on",
       company: get("company"),
       locale,
@@ -281,6 +282,37 @@ export function Contact({
               placeholder={t.contact.fields.messagePlaceholder}
               className={`${inputClass(false)} resize-y`}
             />
+          </div>
+
+          {/* B2B only — the enquirer states it here rather than the site
+              assuming it. Linked to the terms, which is where the reason
+              lives. Only once those terms are published: until the operator
+              is registered there is no page to send anyone to. */}
+          <div>
+            <label className="flex cursor-pointer items-start gap-3 text-sm text-text-secondary">
+              <input
+                type="checkbox"
+                name="business"
+                aria-invalid={errors.business ? true : undefined}
+                aria-describedby={errors.business ? `${uid}-business-error` : undefined}
+                className="mt-0.5 size-5 shrink-0 cursor-pointer accent-[var(--c-accent)]"
+              />
+              <span>
+                {t.contact.business.label}
+                {hasOperator ? (
+                  <>
+                    {" "}
+                    <a
+                      href={`/${locale}/terms`}
+                      className="text-accent underline underline-offset-4"
+                    >
+                      {t.contact.business.link}
+                    </a>
+                  </>
+                ) : null}
+              </span>
+            </label>
+            <FieldError id={`${uid}-business-error`} message={errors.business} />
           </div>
 
           <div>

@@ -1,7 +1,7 @@
 export const budgetKeys = ["under500", "500to1500", "1500to3000", "over3000"] as const;
 export type BudgetKey = (typeof budgetKeys)[number];
 
-export type EnquiryErrorKey = "name" | "email" | "phone" | "service" | "consent";
+export type EnquiryErrorKey = "name" | "email" | "phone" | "service" | "business" | "consent";
 
 export type Enquiry = {
   name: string;
@@ -11,6 +11,13 @@ export type Enquiry = {
   budget: string;
   timeline: string;
   message: string;
+  /**
+   * The enquirer confirms they are ordering as a business or organisation,
+   * not as a consumer. Services are sold B2B only (see site.b2bOnly), and
+   * this is where that stops being a line in the terms and becomes something
+   * each client actually stated.
+   */
+  business: boolean;
   consent: boolean;
   locale: string;
   /** Bot trap. A human never sees this field, so anything in it is a bot. */
@@ -62,6 +69,7 @@ export function validateEnquiry(input: Partial<Enquiry>): EnquiryErrorKey[] {
   // Services now come from the CMS (no fixed slug list to check against), so
   // this only confirms something was picked, not which service it was.
   if (!(input.service ?? "").trim()) errors.push("service");
+  if (!input.business) errors.push("business");
   if (!input.consent) errors.push("consent");
 
   return errors;

@@ -1,7 +1,24 @@
 import type { Locale } from "@/i18n/config";
+import type { LegalDoc } from "@/components/legal/LegalDocument";
+import { hasOperator, site } from "@/lib/site";
 
-type Block = { heading: string; body: string[] };
-type PrivacyDoc = { title: string; updated: string; intro: string; blocks: Block[] };
+type PrivacyDoc = LegalDoc;
+
+/*
+ * GDPR Art. 13 wants the controller identified. "Ktenor" is a brand, not a
+ * person or a company, so once the trade licence exists the controller is
+ * named as registered — obchodné meno, place of business, IČO — and the brand
+ * becomes what it is: the name the business trades under.
+ */
+const op = site.operator;
+
+const controllerEn = hasOperator
+  ? `The controller responsible for the processing described on this page is ${op.name}, place of business ${op.address}, Company ID (IČO) ${op.ico}, registration: ${op.register}. The business trades as Ktenor and is reachable directly at ${site.contact.email}.`
+  : `The controller responsible for the processing described on this page is Ktenor, a one-person digital studio based in Bratislava, Slovakia — reachable directly at ${site.contact.email}.`;
+
+const controllerSk = hasOperator
+  ? `Prevádzkovateľom zodpovedným za spracúvanie opísané na tejto stránke je ${op.name}, miesto podnikania ${op.address}, IČO ${op.ico}, zápis: ${op.register}. Podnik pôsobí pod značkou Ktenor a je dosiahnuteľný priamo na ${site.contact.email}.`
+  : `Prevádzkovateľom zodpovedným za spracúvanie opísané na tejto stránke je Ktenor, jednoosobové digitálne štúdio so sídlom v Bratislave — dosiahnuteľné priamo na ${site.contact.email}.`;
 
 /**
  * Describes only what the site actually does — no clause here describes
@@ -25,7 +42,7 @@ const en: PrivacyDoc = {
     {
       heading: "Who is responsible for this",
       body: [
-        "The controller responsible for the processing described on this page is Ktenor, a one-person digital studio based in Bratislava, Slovakia — reachable directly at ktenorstudio@gmail.com.",
+        controllerEn,
         "If you have a question about your personal data, or would like to request access, correction, restriction or deletion, contact me at that address.",
       ],
     },
@@ -141,7 +158,7 @@ const sk: PrivacyDoc = {
     {
       heading: "Kto je za to zodpovedný",
       body: [
-        "Prevádzkovateľom zodpovedným za spracúvanie opísané na tejto stránke je Ktenor, jednoosobové digitálne štúdio so sídlom v Bratislave — dosiahnuteľné priamo na ktenorstudio@gmail.com.",
+        controllerSk,
         "Ak máte otázku ohľadom svojich osobných údajov, alebo by ste chceli požiadať o prístup, opravu, obmedzenie či vymazanie, napíšte mi na túto adresu.",
       ],
     },

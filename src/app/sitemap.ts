@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/i18n/config";
-import { site } from "@/lib/site";
+import { hasOperator, site } from "@/lib/site";
 
-const paths = ["", "/privacy"];
+/* The terms only exist once the operator is registered (see site.ts). */
+const paths = ["", "/privacy", ...(hasOperator ? ["/terms"] : [])];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

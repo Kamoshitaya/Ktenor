@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n";
-import { site } from "@/lib/site";
+import { hasOperator, site } from "@/lib/site";
 import { Logo } from "@/components/brand/Logo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
@@ -114,16 +114,42 @@ export function Footer({ locale, t }: Props) {
           </div>
         </div>
 
-        <div className="mt-[var(--spacing-block)] flex flex-wrap items-center justify-between gap-4 border-t border-line pt-8 text-caption text-text-muted">
-          <p>
-            © {new Date().getFullYear()} {site.legalName}. {t.footer.rights}
-          </p>
-          <Link
-            href={`/${locale}/privacy`}
-            className="inline-flex min-h-11 items-center transition-colors duration-[var(--dur-base)] hover:text-text-secondary"
-          >
-            {t.footer.privacy}
-          </Link>
+        <div className="mt-[var(--spacing-block)] flex flex-wrap items-start justify-between gap-x-8 gap-y-4 border-t border-line pt-8 text-caption text-text-muted">
+          <div className="space-y-2">
+            <p>
+              © {new Date().getFullYear()} {site.legalName}. {t.footer.rights}
+            </p>
+            {/*
+              Who legally runs the site, as § 4 of Act 22/2004 requires of anyone
+              offering services online. Rendered only once the živnosť exists and
+              src/lib/site.ts carries it — never as a placeholder.
+            */}
+            {hasOperator ? (
+              <p className="max-w-[72ch] leading-relaxed">
+                {t.footer.operator}: {site.operator.name}, {site.operator.address} ·{" "}
+                {t.footer.ico} {site.operator.ico} · {site.operator.register} ·{" "}
+                {site.operator.vatPayer
+                  ? `${t.footer.vatId} ${site.operator.vatId}`
+                  : t.footer.notVatPayer}
+              </p>
+            ) : null}
+          </div>
+          <div className="flex flex-wrap gap-x-6">
+            {hasOperator ? (
+              <Link
+                href={`/${locale}/terms`}
+                className="inline-flex min-h-11 items-center transition-colors duration-[var(--dur-base)] hover:text-text-secondary"
+              >
+                {t.footer.terms}
+              </Link>
+            ) : null}
+            <Link
+              href={`/${locale}/privacy`}
+              className="inline-flex min-h-11 items-center transition-colors duration-[var(--dur-base)] hover:text-text-secondary"
+            >
+              {t.footer.privacy}
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

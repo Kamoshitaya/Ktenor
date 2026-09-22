@@ -88,6 +88,8 @@ const sk: Dictionary = {
     addonsTitle: "Doplnky",
     addonsIntro: "Účtujú sa zvlášť, aby ceny vyššie zostali poctivé.",
     payment: "50 % vopred, 50 % po dokončení — pred spustením webu.",
+    b2b: "Služby poskytujem firmám a organizáciám.",
+    vatFinal: "Ceny sú konečné — prevádzkovateľ nie je platiteľom DPH, nič sa k nim nepripočítava.",
     disclaimer:
       "Vstupné ceny sú orientačné. Konečná cena závisí od rozsahu projektu, funkcionality a požiadaviek.",
     enquiry: {
@@ -311,6 +313,10 @@ const sk: Dictionary = {
       "1500to3000": "1 500 – 3 000 €",
       over3000: "3 000 € a viac",
     },
+    business: {
+      label: "Dopytujem v mene firmy alebo organizácie, nie ako spotrebiteľ",
+      link: "Obchodné podmienky",
+    },
     consent: {
       label: "Súhlasím so spracovaním osobných údajov",
       link: "Ochrana osobných údajov",
@@ -332,6 +338,7 @@ const sk: Dictionary = {
       email: "Táto e-mailová adresa nevyzerá správne.",
       phone: "Toto telefónne číslo nevyzerá správne.",
       service: "Vyberte prosím, čo potrebujete.",
+      business: "Pracujem len s firmami a organizáciami — potvrďte to prosím.",
       consent: "Potvrďte prosím súhlas so spracovaním údajov.",
     },
     direct: "Alebo mi napíšte priamo",
@@ -345,7 +352,12 @@ const sk: Dictionary = {
     social: "Sociálne siete",
     rights: "Všetky práva vyhradené.",
     privacy: "Ochrana osobných údajov",
+    terms: "Obchodné podmienky",
     location: "Bratislava, Slovensko — pracujem na diaľku po celej krajine",
+    operator: "Prevádzkovateľ",
+    ico: "IČO",
+    vatId: "IČ DPH",
+    notVatPayer: "Nie je platiteľom DPH.",
   },
 
   notFound: {

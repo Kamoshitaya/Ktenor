@@ -3,6 +3,7 @@ import type { ServiceAddon, ServicePackage } from "@/lib/cms";
 import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
 import { PricingCard } from "./PricingCard";
+import { site } from "@/lib/site";
 
 /**
  * No "most popular" badge: there is no sales history yet, so the label would
@@ -76,6 +77,13 @@ export function Services({
             ))}
           </ul>
           <p className="mt-8 text-sm text-text-muted">{t.services.payment}</p>
+          {/* Said where the prices are, not only in the terms: a visitor
+              comparing quotes needs to know these are the whole number, and
+              that the offer is for businesses, before they enquire. */}
+          <p className="mt-2 text-sm text-text-muted">
+            {site.b2bOnly ? `${t.services.b2b} ` : ""}
+            {site.operator.vatPayer ? "" : t.services.vatFinal}
+          </p>
         </div>
 
         <div>
